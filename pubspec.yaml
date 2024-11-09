@@ -1,0 +1,32 @@
+name: phone_fortune
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core:
+  firebase_auth:
+  cloud_firestore:
+  riverpod:
+  freezed_annotation:
+  agora_rtc_engine:
+  go_router:
+  flutter_riverpod: ^2.6.1
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner:
+  freezed:
+  riverpod_generator:
+
+flutter:
+  uses-material-design: true
