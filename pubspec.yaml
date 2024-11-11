@@ -18,6 +18,7 @@ dependencies:
   agora_rtc_engine:
   go_router:
   flutter_riverpod: ^2.6.1
+  json_annotation:
 
   cupertino_icons: ^1.0.8
 
@@ -27,6 +28,7 @@ dev_dependencies:
   build_runner:
   freezed:
   riverpod_generator:
+  json_serializable:
 
 flutter:
   uses-material-design: true

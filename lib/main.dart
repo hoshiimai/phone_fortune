@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phone_fortune/views/auth/sign_up_page.dart';
-import 'views/auth/auth_page.dart';
+import 'package:phone_fortune/views/auth/auth_page.dart';
+import 'views/auth/sign_up_page.dart';
 import 'views/home/home_page.dart';
+import 'views/fortune_teller_list_page.dart';
+import 'views/fortune_teller_detail_page.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();  // Flutterエンジンを初期化
-  await Firebase.initializeApp();  // Firebaseの初期化
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -26,8 +28,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// GoRouterのルート設定
 final GoRouter _router = GoRouter(
-  initialLocation: FirebaseAuth.instance.currentUser == null ? '/signup' : '/home',
+  initialLocation: FirebaseAuth.instance.currentUser == null ? '/signup' : '/fortune_tellers',
   routes: [
     GoRoute(
       path: '/signup',
@@ -41,15 +44,33 @@ final GoRouter _router = GoRouter(
       path: '/home',
       builder: (context, state) => HomePage(),
     ),
+    GoRoute(
+      path: '/fortune_tellers',
+      builder: (context, state) => FortuneTellerListPage(),
+      routes: [
+        GoRoute(
+          path: ':id',  
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return FortuneTellerDetailPage(id: id);
+          },
+        ),
+      ],
+    ),
   ],
+  // redirectの追加
   redirect: (context, state) {
     final isSignedIn = FirebaseAuth.instance.currentUser != null;
-    final isSignUp = state.uri.toString() == '/signup';
+    final isGoingToSignIn = state.matchedLocation == '/signin' || state.matchedLocation == '/signup';
 
-    // 既にサインインしている場合はホーム画面にリダイレクト
-    if (isSignedIn && isSignUp) return '/home';
-    if (!isSignedIn && state.uri.toString() == '/home') return '/signin';
-
+    if (!isSignedIn && !isGoingToSignIn) {
+      // サインインしていないユーザーが保護されたページにアクセスした場合
+      return '/signin';
+    } else if (isSignedIn && isGoingToSignIn) {
+      // サインインしているユーザーがサインイン/サインアップページにアクセスした場合
+      return '/home';
+    }
     return null;
   },
 );
+
