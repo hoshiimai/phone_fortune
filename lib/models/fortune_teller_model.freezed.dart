@@ -173,27 +173,33 @@ class __$$FortuneTellerModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$FortuneTellerModelImpl implements _FortuneTellerModel {
   const _$FortuneTellerModelImpl(
-      {required this.id,
-      required this.name,
-      required this.specialty,
-      required this.profile,
-      required this.imageUrl,
-      required this.status});
+      {this.id = 'Unknown ID',
+      this.name = 'Unknown',
+      this.specialty = 'Unknown Specialty',
+      this.profile = 'No profile available',
+      this.imageUrl = '',
+      this.status = 'Unavailable'});
 
   factory _$FortuneTellerModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$FortuneTellerModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String specialty;
   @override
+  @JsonKey()
   final String profile;
   @override
+  @JsonKey()
   final String imageUrl;
   @override
+  @JsonKey()
   final String status;
 
   @override
@@ -240,12 +246,12 @@ class _$FortuneTellerModelImpl implements _FortuneTellerModel {
 
 abstract class _FortuneTellerModel implements FortuneTellerModel {
   const factory _FortuneTellerModel(
-      {required final String id,
-      required final String name,
-      required final String specialty,
-      required final String profile,
-      required final String imageUrl,
-      required final String status}) = _$FortuneTellerModelImpl;
+      {final String id,
+      final String name,
+      final String specialty,
+      final String profile,
+      final String imageUrl,
+      final String status}) = _$FortuneTellerModelImpl;
 
   factory _FortuneTellerModel.fromJson(Map<String, dynamic> json) =
       _$FortuneTellerModelImpl.fromJson;

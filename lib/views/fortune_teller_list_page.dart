@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/fortune_teller_provider.dart';
-import '../models/fortune_teller_model.dart';
 
 class FortuneTellerListPage extends ConsumerWidget {
   @override
@@ -20,16 +19,15 @@ class FortuneTellerListPage extends ConsumerWidget {
             itemBuilder: (context, index) {
               final fortuneTeller = fortuneTellers[index];
               return ListTile(
-                leading: Image.network(
-                  fortuneTeller.imageUrl,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+                leading: CircleAvatar(
+                  backgroundImage: fortuneTeller.imageUrl.isNotEmpty
+                      ? NetworkImage(fortuneTeller.imageUrl)
+                      : AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                  radius: 25,  // 画像サイズを50x50にする
                 ),
                 title: Text(fortuneTeller.name),
                 subtitle: Text(fortuneTeller.specialty),
                 onTap: () {
-                  // タップイベントのログを出力
                   print('タップされました: ID = ${fortuneTeller.id}');
                   context.go('/fortune_tellers/${fortuneTeller.id}');
                 },

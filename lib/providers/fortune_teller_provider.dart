@@ -7,15 +7,7 @@ final fortuneTellerProvider = FutureProvider<List<FortuneTellerModel>>((ref) asy
     final querySnapshot = await FirebaseFirestore.instance.collection('fortune_tellers').get();
 
     return querySnapshot.docs.map((doc) {
-      final data = doc.data();
-      return FortuneTellerModel(
-        id: doc.id,
-        name: data['name'] ?? 'Unknown',
-        specialty: data['specialty'] ?? 'Unknown Specialty',
-        profile: data['profile'] ?? 'No profile available',
-        imageUrl: data['imageUrl'] ?? '',
-        status: data['status'] ?? 'Unavailable',
-      );
+      return FortuneTellerModel.fromDocumentSnapshot(doc);
     }).toList();
   } catch (e) {
     print("Firestoreデータ取得エラー: $e");
