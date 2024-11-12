@@ -20,15 +20,23 @@ class FortuneTellerListPage extends ConsumerWidget {
               final fortuneTeller = fortuneTellers[index];
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: fortuneTeller.imageUrl.isNotEmpty
-                      ? NetworkImage(fortuneTeller.imageUrl)
-                      : AssetImage('assets/images/default_avatar.png') as ImageProvider,
-                  radius: 25,  // 画像サイズを50x50にする
+                  backgroundImage: NetworkImage(fortuneTeller.imageUrl),
                 ),
                 title: Text(fortuneTeller.name),
-                subtitle: Text(fortuneTeller.specialty),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(fortuneTeller.specialty),
+                    Text(
+                      fortuneTeller.status,
+                      style: TextStyle(
+                        color: fortuneTeller.status == 'available' ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 onTap: () {
-                  print('タップされました: ID = ${fortuneTeller.id}');
                   context.go('/fortune_tellers/${fortuneTeller.id}');
                 },
               );
