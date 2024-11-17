@@ -7,6 +7,18 @@ class FortuneTellerDetailPage extends StatelessWidget {
 
   const FortuneTellerDetailPage({required this.id});
 
+  // 「並ぶ」ボタンを押したときにFirestoreにユーザーを追加する関数
+  Future<void> joinWaitingList(String fortuneTellerId, String userId) async {
+    final docRef = FirebaseFirestore.instance.collection('waiting_list').doc(fortuneTellerId);
+
+    await docRef.set({
+      'users': FieldValue.arrayUnion([{
+        'userId': userId,
+        'timestamp': Timestamp.now(),
+      }])
+    }, SetOptions(merge: true)); // `SetOptions(merge: true)` で既存データに追記
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +53,22 @@ class FortuneTellerDetailPage extends StatelessWidget {
                   Text('プロフィール: ${fortuneTeller.profile}'),
                   SizedBox(height: 8),
                   Text('ステータス: ${fortuneTeller.status}'),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // 現在のユーザーID（仮で'currentUserId'）を設定して「並ぶ」機能を実行
+                      joinWaitingList(id, 'currentUserId').then((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('並びました！'))
+                        );
+                      }).catchError((error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('並ぶのに失敗しました: $error'))
+                        );
+                      });
+                    },
+                    child: Text('並ぶ'),
+                  ),
                 ],
               ),
             );

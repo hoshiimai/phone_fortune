@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/fortune_teller_provider.dart';
+import '../providers/waiting_list_provider.dart';
 
 class FortuneTellerListPage extends ConsumerWidget {
   @override
@@ -18,6 +19,8 @@ class FortuneTellerListPage extends ConsumerWidget {
             itemCount: fortuneTellers.length,
             itemBuilder: (context, index) {
               final fortuneTeller = fortuneTellers[index];
+              final waitingListAsyncValue = ref.watch(waitingListProvider(fortuneTeller.id));
+
               return ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(fortuneTeller.imageUrl),
@@ -27,12 +30,19 @@ class FortuneTellerListPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(fortuneTeller.specialty),
-                    Text(
-                      fortuneTeller.status,
-                      style: TextStyle(
-                        color: fortuneTeller.status == 'available' ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    waitingListAsyncValue.when(
+                      data: (waitingList) {
+                        final waitingCount = waitingList.length;
+                        return Text(
+                          '待機中: $waitingCount 人',
+                          style: TextStyle(
+                            color: waitingCount > 0 ? Colors.red : Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                      loading: () => Text('待機人数を取得中...'),
+                      error: (error, stack) => Text('エラーが発生しました'),
                     ),
                   ],
                 ),

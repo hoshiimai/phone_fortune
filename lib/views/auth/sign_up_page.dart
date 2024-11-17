@@ -1,123 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:go_router/go_router.dart';
-import '../../providers/auth_providers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../providers/user_info_provider.dart' as user_model;
+import 'thank_you_page.dart';
 
 class SignUpPage extends ConsumerWidget {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _birthdateController = TextEditingController();
-  final TextEditingController _codeController = TextEditingController();
-  String? _verificationId;
-  String? _gender;
-
-  // エラーメッセージを設定する関数
-  void _setError(WidgetRef ref, String? message) {
-    ref.read(errorMessageProvider.notifier).setError(message);
-  }
-
-  // Firestoreにユーザー情報を保存するメソッド
-  Future<void> _saveUserData(User user) async {
-    final userRef = _firestore.collection('users').doc(user.uid);
-    await userRef.set({
-      'uid': user.uid,
-      'phoneNumber': user.phoneNumber,
-      'username': _usernameController.text.trim(),
-      'birthdate': _birthdateController.text.trim(),
-      'gender': _gender,
-      'createdAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true)); // ドキュメントが存在しない場合のみ作成
-  }
-
-  // 電話番号の認証コード送信処理
-  Future<void> _verifyPhoneNumber(BuildContext context, WidgetRef ref) async {
-    final String phoneNumber = _phoneController.text.trim();
-    if (phoneNumber.isEmpty) {
-      _setError(ref, "電話番号を入力してください");
-      return;
-    }
-
-    String formattedPhoneNumber = phoneNumber;
-    if (!formattedPhoneNumber.startsWith('+')) {
-      formattedPhoneNumber = '+81' + formattedPhoneNumber.substring(1); // 日本の国番号を追加
-    }
-
-    _verificationId = null; // 送信前にリセット
-
-    try {
-      await _auth.verifyPhoneNumber(
-        phoneNumber: formattedPhoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          await _auth.signInWithCredential(credential);
-          context.go('/home'); // 自動サインイン成功時にホーム画面へ
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          if (e.code == 'credential-already-in-use') {
-            _setError(ref, "この電話番号は既に使用されています。");
-          } else if (e.code == 'invalid-phone-number') {
-            _setError(ref, "電話番号の形式が正しくありません");
-          } else {
-            _setError(ref, "認証に失敗しました。しばらくしてからもう一度お試しください。");
-          }
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          _verificationId = verificationId; // 新しいverificationIdを保持
-          _setError(ref, null); // エラーメッセージをクリア
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          _verificationId = verificationId;
-        },
-        timeout: Duration(seconds: 60),
-      );
-    } catch (e) {
-      _setError(ref, "予期しないエラーが発生しました。もう一度お試しください。");
-    }
-  }
-
-  // SMSコードでのサインイン処理
-  Future<void> _signInWithSmsCode(BuildContext context, WidgetRef ref) async {
-    final String smsCode = _codeController.text.trim();
-    if (_verificationId == null) {
-      _setError(ref, "認証コードが送信されていません。もう一度お試しください");
-      return;
-    }
-    if (smsCode.isEmpty) {
-      _setError(ref, "認証コードを入力してください");
-      return;
-    }
-
-    final PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: _verificationId!,
-      smsCode: smsCode,
-    );
-
-    try {
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
-      await _saveUserData(userCredential.user!);  // Firestoreにユーザー情報を保存
-      context.go('/home'); // ホーム画面に遷移
-    } catch (e) {
-      if (e is FirebaseAuthException) {
-        if (e.code == 'invalid-verification-code') {
-          _setError(ref, "認証コードが正しくありません");
-        } else if (e.code == 'session-expired') {
-          _setError(ref, "セッションが期限切れです。もう一度お試しください");
-        } else {
-          _setError(ref, "認証に失敗しました。エラーコード: ${e.code}");
-        }
-      } else {
-        _setError(ref, "予期しないエラーが発生しました。もう一度お試しください");
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final errorMessage = ref.watch(errorMessageProvider);
+    final userInfo = ref.watch(user_model.userInfoProvider);
+    final userInfoNotifier = ref.read(user_model.userInfoProvider.notifier);
+
+    // 年、月、日のリストを生成
+    final years = List.generate(100, (index) => (DateTime.now().year - index).toString());
+    final months = List.generate(12, (index) => (index + 1).toString().padLeft(2, '0'));
+    final days = List.generate(31, (index) => (index + 1).toString().padLeft(2, '0'));
 
     return Scaffold(
       appBar: AppBar(title: Text('新規登録')),
@@ -127,61 +24,263 @@ class SignUpPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                controller: _phoneController,
-                decoration: InputDecoration(labelText: "電話番号を入力 (+81...)"),
-                keyboardType: TextInputType.phone,
-              ),
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(labelText: "ユーザー名"),
-              ),
-              TextField(
-                controller: _birthdateController,
-                decoration: InputDecoration(labelText: "生年月日 (YYYY-MM-DD)"),
-              ),
-              DropdownButtonFormField<String>(
-                value: _gender,
-                items: ['男性', '女性', 'その他'].map((gender) {
-                  return DropdownMenuItem(value: gender, child: Text(gender));
+              // お悩み
+              Text("お悩み"),
+              Wrap(
+                spacing: 8.0,
+                children: ['人生', '恋愛', '片思い', '復縁'].map((concern) {
+                  return ChoiceChip(
+                    label: Text(concern),
+                    selected: userInfo.concern == concern,
+                    onSelected: (selected) {
+                      userInfoNotifier.updateConcern(selected ? concern : '');
+                    },
+                    selectedColor: Colors.blue,
+                    labelStyle: TextStyle(
+                      color: userInfo.concern == concern ? Colors.white : Colors.black,
+                    ),
+                  );
                 }).toList(),
-                onChanged: (value) {
-                  _gender = value;
-                },
-                decoration: InputDecoration(labelText: "性別"),
               ),
-              SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _verifyPhoneNumber(context, ref),
-                child: Text("認証コードを送信"),
+              SizedBox(height: 16),
+
+              // 性別
+              Text("性別"),
+              Wrap(
+                spacing: 8.0,
+                children: ['男性', '女性', 'その他'].map((gender) {
+                  return ChoiceChip(
+                    label: Text(gender),
+                    selected: userInfo.gender == gender,
+                    onSelected: (selected) {
+                      userInfoNotifier.updateGender(selected ? gender : '');
+                    },
+                    selectedColor: Colors.blue,
+                    labelStyle: TextStyle(
+                      color: userInfo.gender == gender ? Colors.white : Colors.black,
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 16),
+
+              // 生年月日
+              Text("生年月日"),
+              Row(
+                children: [
+                  DropdownButton<String>(
+                    value: years.contains(userInfo.birthdate.split('-').first)
+                        ? userInfo.birthdate.split('-').first
+                        : null,
+                    hint: Text("年"),
+                    items: years.map((year) {
+                      return DropdownMenuItem(value: year, child: Text(year));
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        final parts = userInfo.birthdate.split('-');
+                        userInfoNotifier.updateBirthdate('$value-${parts.length > 1 ? parts[1] : ''}-${parts.length > 2 ? parts[2] : ''}');
+                      }
+                    },
+                  ),
+                  SizedBox(width: 8),
+                  DropdownButton<String>(
+                    value: months.contains(userInfo.birthdate.split('-').elementAtOrNull(1))
+                        ? userInfo.birthdate.split('-').elementAtOrNull(1)
+                        : null,
+                    hint: Text("月"),
+                    items: months.map((month) {
+                      return DropdownMenuItem(value: month, child: Text(month));
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        final parts = userInfo.birthdate.split('-');
+                        userInfoNotifier.updateBirthdate('${parts.first}-${value}-${parts.length > 2 ? parts[2] : ''}');
+                      }
+                    },
+                  ),
+                  SizedBox(width: 8),
+                  DropdownButton<String>(
+                    value: days.contains(userInfo.birthdate.split('-').elementAtOrNull(2))
+                        ? userInfo.birthdate.split('-').elementAtOrNull(2)
+                        : null,
+                    hint: Text("日"),
+                    items: days.map((day) {
+                      return DropdownMenuItem(value: day, child: Text(day));
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        final parts = userInfo.birthdate.split('-');
+                        userInfoNotifier.updateBirthdate('${parts.first}-${parts.elementAtOrNull(1) ?? ''}-$value');
+                      }
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+
+              // テキストフィールド群
+              TextField(
+                decoration: InputDecoration(labelText: "お名前（全角）"),
+                onChanged: userInfoNotifier.updateName,
               ),
               TextField(
-                controller: _codeController,
-                decoration: InputDecoration(labelText: "SMS認証コードを入力"),
-                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: "フリガナ（カタカナ）"),
+                onChanged: userInfoNotifier.updateFurigana,
               ),
-              SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _signInWithSmsCode(context, ref),  // 「サインアップ」ボタンで呼び出し
-                child: Text("サインアップ"),
+              TextField(
+                decoration: InputDecoration(labelText: "ニックネーム"),
+                onChanged: userInfoNotifier.updateNickname,
               ),
-              if (errorMessage != null) // エラーメッセージを表示
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Text(errorMessage, style: TextStyle(color: Colors.red)),
-                ),
+              TextField(
+                decoration: InputDecoration(labelText: "メールアドレス"),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  userInfoNotifier.updateEmail(value.trim());
+                },
+              ),
               SizedBox(height: 16),
-              GestureDetector(
-                onTap: () => context.go('/signin'), // サインイン画面に遷移
-                child: Text(
-                  "すでに登録済みの方はこちら",
-                  style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                ),
+
+              // 確認メール送信ボタン
+              ElevatedButton(
+                onPressed: () async {
+                  final email = userInfo.email.trim();
+
+                  // バリデーションチェック
+                  String? errorMessage = validateInputs(userInfo, email);
+
+                  if (errorMessage != null) {
+                    // エラーダイアログを表示
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("入力エラー"),
+                        content: Text(errorMessage),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text("閉じる"),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
+                  try {
+                    // Firebase Auth: ユーザー作成 & 認証メール送信
+                    final userCredential = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                            email: email, password: 'temporaryPassword');
+                    await userCredential.user?.sendEmailVerification();
+
+                    // Firestore に仮登録データを保存
+                    final userId = userCredential.user?.uid;
+                    if (userId != null) {
+                      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+                        'name': userInfo.name,
+                        'email': userInfo.email,
+                        'nickname': userInfo.nickname,
+                        'furigana': userInfo.furigana,
+                        'gender': userInfo.gender,
+                        'maritalStatus': userInfo.maritalStatus,
+                        'concern': userInfo.concern,
+                        'birthdate': userInfo.birthdate,
+                        'status': '未認証',
+                        'created_at': Timestamp.now(),
+                      });
+                    }
+
+                    // サンクスページに遷移
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ThankYouPage()),
+                    );
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'email-already-in-use') {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("登録済みメールアドレス"),
+                          content: Text("このメールアドレスは既に登録されています"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text("閉じる"),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("エラー"),
+                          content: Text("登録中にエラーが発生しました: ${e.message}"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text("閉じる"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("エラー"),
+                        content: Text("登録中にエラーが発生しました: $e"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text("閉じる"),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+                child: Text("確認メールを送信"),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  /// 入力値のバリデーション
+  String? validateInputs(user_model.UserInfo userInfo, String email) {
+    if (userInfo.concern.isEmpty) {
+      return "お悩みを選択してください";
+    }
+    if (userInfo.gender.isEmpty) {
+      return "性別を選択してください";
+    }
+
+    // 生年月日のチェック: 年、月、日がすべて選択されているか
+    final birthdateParts = userInfo.birthdate.split('-');
+    if (birthdateParts.length != 3 || 
+        birthdateParts[0].isEmpty || 
+        birthdateParts[1].isEmpty || 
+        birthdateParts[2].isEmpty) {
+      return "生年月日の年・月・日をすべて選択してください";
+    }
+
+    if (userInfo.name.isEmpty || !RegExp(r'^[^\x00-\x7F]+$').hasMatch(userInfo.name)) {
+      return "お名前を全角で入力してください";
+    }
+    if (userInfo.furigana.isEmpty || !RegExp(r'^[ァ-ンヴー\s]+$').hasMatch(userInfo.furigana)) {
+      return "フリガナをカタカナで入力してください";
+    }
+    if (userInfo.nickname.isEmpty) {
+      return "ニックネームを入力してください";
+    }
+    if (email.isEmpty || !RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(email)) {
+      return "正しい形式のメールアドレスを入力してください";
+    }
+    return null;
   }
 }
