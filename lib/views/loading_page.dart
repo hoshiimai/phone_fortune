@@ -30,7 +30,7 @@ class _LoadingPageState extends State<LoadingPage> {
           GoRouter.of(context).go('/fortune_tellers');
         } else {
           // 認証メール未確認の場合
-          GoRouter.of(context).go('/thankyou');
+          GoRouter.of(context).go('/verify_email');
         }
       } else {
         // 未登録の場合

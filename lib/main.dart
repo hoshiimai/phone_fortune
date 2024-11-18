@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phone_fortune/views/auth/verify_email_page.dart';
 import 'views/auth/sign_up_page.dart';
 import 'views/auth/thank_you_page.dart';
 import 'views/fortune_teller_list_page.dart';
@@ -16,7 +17,7 @@ void main() async {
 }
 
 final GoRouter router = GoRouter(
-  initialLocation: '/loading', // 初期ルートを /loading に設定
+  initialLocation: '/loading',
   routes: [
     GoRoute(
       path: '/loading',
@@ -26,6 +27,10 @@ final GoRouter router = GoRouter(
       path: '/signup',
       builder: (context, state) => SignUpPage(),
     ),
+    GoRoute(
+      path: '/verify_email',
+      builder: (context, state) => VerifyEmailPage(),
+    ),    
     GoRoute(
       path: '/thankyou',
       builder: (context, state) => ThankYouPage(),

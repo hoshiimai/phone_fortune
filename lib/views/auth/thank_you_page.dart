@@ -16,14 +16,6 @@ class ThankYouPage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // サインイン画面に戻る処理（必要に応じて変更）
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                },
-                child: Text("ホームに戻る"),
-              ),
             ],
           ),
         ),

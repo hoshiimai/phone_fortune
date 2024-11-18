@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import '../../providers/user_info_provider.dart' as user_model;
-import 'thank_you_page.dart';
+import '../../providers/blacklist_provider.dart';
 
 class SignUpPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userInfo = ref.watch(user_model.userInfoProvider);
     final userInfoNotifier = ref.read(user_model.userInfoProvider.notifier);
+    final blacklistAsync = ref.watch(blacklistProvider);
 
     // 年、月、日のリストを生成
     final years = List.generate(100, (index) => (DateTime.now().year - index).toString());
@@ -142,107 +144,73 @@ class SignUpPage extends ConsumerWidget {
               SizedBox(height: 16),
 
               // 確認メール送信ボタン
-              ElevatedButton(
-                onPressed: () async {
-                  final email = userInfo.email.trim();
+              blacklistAsync.when(
+                data: (blacklist) => ElevatedButton(
+                  onPressed: () async {
+                    final email = userInfo.email.trim();
 
-                  // バリデーションチェック
-                  String? errorMessage = validateInputs(userInfo, email);
-
-                  if (errorMessage != null) {
-                    // エラーダイアログを表示
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text("入力エラー"),
-                        content: Text(errorMessage),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text("閉じる"),
-                          ),
-                        ],
-                      ),
-                    );
-                    return;
-                  }
-
-                  try {
-                    // Firebase Auth: ユーザー作成 & 認証メール送信
-                    final userCredential = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: email, password: 'temporaryPassword');
-                    await userCredential.user?.sendEmailVerification();
-
-                    // Firestore に仮登録データを保存
-                    final userId = userCredential.user?.uid;
-                    if (userId != null) {
-                      await FirebaseFirestore.instance.collection('users').doc(userId).set({
-                        'name': userInfo.name,
-                        'email': userInfo.email,
-                        'nickname': userInfo.nickname,
-                        'furigana': userInfo.furigana,
-                        'gender': userInfo.gender,
-                        'maritalStatus': userInfo.maritalStatus,
-                        'concern': userInfo.concern,
-                        'birthdate': userInfo.birthdate,
-                        'status': '未認証',
-                        'created_at': Timestamp.now(),
-                      });
+                    // バリデーションチェック
+                    String? errorMessage = validateInputs(userInfo, email);
+                    if (errorMessage != null) {
+                      _showDialog(context, "入力エラー", errorMessage);
+                      return;
                     }
 
-                    // サンクスページに遷移
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ThankYouPage()),
-                    );
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'email-already-in-use') {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("登録済みメールアドレス"),
-                          content: Text("このメールアドレスは既に登録されています"),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text("閉じる"),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("エラー"),
-                          content: Text("登録中にエラーが発生しました: ${e.message}"),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text("閉じる"),
-                            ),
-                          ],
-                        ),
-                      );
+                    // ブラックリストチェック
+                    if (isEmailBlacklisted(email, blacklist)) {
+                      _showDialog(context, "エラー", "このメールアドレスは登録できません。サポートにお問い合わせください。");
+                      return;
                     }
-                  } catch (e) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text("エラー"),
-                        content: Text("登録中にエラーが発生しました: $e"),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text("閉じる"),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+
+                    try {
+                      // Firebase Auth: ユーザー作成 & 認証メール送信
+                      final userCredential = await FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(email: email, password: 'temporaryPassword');
+                      await userCredential.user?.sendEmailVerification();
+
+                      // Firestore に仮登録データを保存
+                      final userId = userCredential.user?.uid;
+                      if (userId != null) {
+                        await FirebaseFirestore.instance.collection('users').doc(userId).set({
+                          'name': userInfo.name,
+                          'email': userInfo.email,
+                          'nickname': userInfo.nickname,
+                          'furigana': userInfo.furigana,
+                          'gender': userInfo.gender,
+                          'maritalStatus': userInfo.maritalStatus,
+                          'concern': userInfo.concern,
+                          'birthdate': userInfo.birthdate,
+                          'status': '未認証',
+                          'created_at': Timestamp.now(),
+                        });
+                      }
+
+                      // サンクスページに遷移
+                      GoRouter.of(context).go('/thankyou');
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'email-already-in-use') {
+                        _showDialog(context, "登録済みメールアドレス", "このメールアドレスは既に登録されています。");
+                      } else {
+                        _showDialog(context, "エラー", "登録中にエラーが発生しました: ${e.message}");
+                      }
+                    } catch (e) {
+                      _showDialog(context, "エラー", "登録中にエラーが発生しました: $e");
+                    }
+                  },
+                  child: Text("確認メールを送信"),
+                ),
+                loading: () => Center(child: CircularProgressIndicator()),
+                error: (error, stackTrace) => Center(child: Text("エラーが発生しました: $error")),
+              ),
+
+              SizedBox(height: 16),
+
+              // 既に登録済みの方はこちらボタン
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).go('/verify_email');
                 },
-                child: Text("確認メールを送信"),
+                child: Text("既に登録済みの方はこちら"),
               ),
             ],
           ),
@@ -251,7 +219,27 @@ class SignUpPage extends ConsumerWidget {
     );
   }
 
-  /// 入力値のバリデーション
+  void _showDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("閉じる"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool isEmailBlacklisted(String email, List<String> blacklist) {
+    final domain = email.split('@').last;
+    return blacklist.contains(email) || blacklist.contains(domain);
+  }
+
   String? validateInputs(user_model.UserInfo userInfo, String email) {
     if (userInfo.concern.isEmpty) {
       return "お悩みを選択してください";
@@ -260,12 +248,8 @@ class SignUpPage extends ConsumerWidget {
       return "性別を選択してください";
     }
 
-    // 生年月日のチェック: 年、月、日がすべて選択されているか
     final birthdateParts = userInfo.birthdate.split('-');
-    if (birthdateParts.length != 3 || 
-        birthdateParts[0].isEmpty || 
-        birthdateParts[1].isEmpty || 
-        birthdateParts[2].isEmpty) {
+    if (birthdateParts.length != 3 || birthdateParts.any((part) => part.isEmpty)) {
       return "生年月日の年・月・日をすべて選択してください";
     }
 
