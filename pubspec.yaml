@@ -1,0 +1,183 @@
+name: callmobile
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.6 <4.0.0'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # Check permission
+  permission_handler: ^11.0.1
+  intl: ^0.19.0
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.6
+  # Dependency injection / router navigator / multi-languages / dialog
+  get: ^4.6.6
+
+  # Bloc/State/Event
+  flutter_bloc: ^8.1.1
+  bloc: ^8.1.1
+  bloc_event_transformers: any
+  easy_debounce: ^2.0.3
+
+  equatable: ^2.0.5
+  package_info_plus: any
+
+  # Shared pref
+  hive: ^2.2.3
+
+  # Display in App Toast a customized progress widgets based on percentage, can be Circular or Linear
+  percent_indicator: ^4.2.2
+
+  # Check status connection internet
+  connectivity_plus: ^5.0.2
+
+  # Images
+  image_picker: ^0.8.6+1
+  cached_network_image: ^3.3.1
+  image: ^4.2.0
+  flutter_cache_manager: ^3.3.0
+
+  flutter_native_splash: ^2.4.0
+  # UI
+  pin_code_fields: ^8.0.1
+  loading_animation_widget: ^1.2.1
+  flutter_svg: ^2.0.9
+  path_provider: ^2.0.12
+  carousel_slider: ^5.0.0
+  smooth_page_indicator: ^1.2.0+3
+#  flutter_callkit_incoming: 2.0.4+2
+  uuid: ^4.5.1
+  audioplayers: ^6.1.0
+
+  # Network
+  dio: ^5.0.0
+  chunked_stream: ^1.4.2
+  mime_type: ^1.0.0
+  file_picker: ^6.1.1
+  http:
+  #  alice: ^0.4.2
+  retrofit: ^4.2.0
+  http_parser: ^4.0.2
+  url_launcher: ^6.3.0
+  socket_io_client: ^2.0.3+1
+
+  dartz: ^0.10.1
+  json_annotation: ^4.8.1
+  freezed_annotation: ^2.4.4
+
+  crypto: ^3.0.5
+
+  simple_gradient_text: ^1.3.0
+
+  # IAP
+  in_app_purchase: 3.1.13
+  in_app_purchase_storekit: 0.3.8+1
+  in_app_purchase_android: ^0.3.6
+
+  # Deeplink
+  #  advertising_id: ^2.7.1
+
+  # Stream
+  flutter_webrtc: 0.11.7
+
+  clipboard: ^0.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^3.0.0
+
+  # Auto create launch icon
+  flutter_launcher_icons: ^0.13.1
+
+  # Assets generation
+  assets_gen: ^1.5.0
+
+  # for Auto Generator
+  build_runner: ^2.4.7
+  retrofit_generator: '>=7.0.0 <8.0.0'
+
+  # for Hive
+  hive_generator: ^2.0.0
+
+  # for Floor
+  floor_generator: ^1.4.2
+
+  # Json
+  json_serializable: ^6.7.1
+  freezed: ^2.5.2
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "images/icon/ic_app_icon.png"
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  assets:
+    - images/icon/
+    - images/bg/
+#    - assets/sounds/sound_caller.wav
+#    - assets/sounds/sound_receive.wav
+
+#  fonts:
+#    - family: HiraginoKakuProW3
+#      fonts:
+#        - asset: fonts/HiraginoKakuGothicProW3.otf
+#    - family: HiraginoKakuProW6
+#      fonts:
+#        - asset: fonts/HiraginoKakuGothicProW6.otf
+#    - family: HiraginoKakuStd
+#      fonts:
+#        - asset: fonts/HiraginoKakuGothicStdW8.otf
+assets_gen:
+  output: utils/app_assets.dart
+  class_name: AppAssets
+  enable: true
+  gen_package_path: false
+  ignore_resolution: false
+  omit_path_levels: 2
+  exclude:

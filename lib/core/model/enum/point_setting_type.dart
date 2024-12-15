@@ -1,0 +1,4 @@
+enum PointSettingType {
+  init,
+  after
+}
