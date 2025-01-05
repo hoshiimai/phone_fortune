@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../locale/locale_key.dart';
 import '../../ui/widgets/base/app_dialog.dart';
 
 enum PermissionType { contact, camera, photos }
@@ -17,8 +16,8 @@ class PermissionManager {
       isPermission = false;
       if (showDialog) {
         await showConfirmDialog(
-            message: LocaleKey.settingContent.trParams({'name': type.name}),
-            textConfirm: LocaleKey.goToSettings.tr,
+            message: 'この機能を使用するには、アプリで ${type.name} を使用する許可を与えるために設定に移動する必要があります。',
+            textConfirm: '設定',
             onClickConfirm: () async {
               Get.back();
               await openAppSettings();

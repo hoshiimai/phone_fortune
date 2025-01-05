@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:callmobile/core/model/response/model/user.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/managers/permission_manager.dart';
-import '../../../../locale/locale_key.dart';
+
 import '../../../../utils/app_assets.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_styles.dart';
@@ -31,7 +31,7 @@ class BannerProfile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              LocaleKey.bannerTitle.tr,
+              'カバー写真',
               style: AppStyles.fontSize14(
                 fontWeight: FontWeight.w600,
                 color: AppColors.black,
@@ -55,7 +55,7 @@ class BannerProfile extends StatelessWidget {
                         borderRadius: 10.borderRadiusAll,
                       ),
                       child: AppImage(
-                        image: state.cover?.path ?? '${state.user!.getCoverPath()}',
+                        image: state.cover?.path ?? '${state.currentLoginUser!.getCoverPath()}',
                         width: Get.width,
                         height: 177,
                         fit: BoxFit.cover,
@@ -73,7 +73,7 @@ class BannerProfile extends StatelessWidget {
                           children: [
                             SvgPicture.asset(AppAssets.ic_upload_svg),
                             Text(
-                              LocaleKey.tipChangeBanner.tr,
+                              'カバー写真を変更する',
                               style: AppStyles.fontSize10(
                                   fontWeight: FontWeight.w600, height: 20 / 10, color: AppColors.white),
                             ),

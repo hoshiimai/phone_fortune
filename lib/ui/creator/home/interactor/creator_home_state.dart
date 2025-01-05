@@ -5,45 +5,37 @@ class CreatorHomeState extends Equatable {
   final String error;
   final PageCommand? pageCommand;
   final User? currentLoggedInUser;
-  final List<User> favoriteCreators;
-  final List<User> callingCreators;
-  final List<User> potentialCreators;
-  final List<User> managedCreators;
-  final CreatorStatus currentStatus;
+  final List<User> waitingFans;
+  final Status currentStatus;
+  final User? recentCallFan;
 
   const CreatorHomeState({
     required this.status,
     required this.error,
     this.pageCommand,
     this.currentLoggedInUser,
-    this.managedCreators = const [],
-    this.favoriteCreators = const [],
-    this.callingCreators = const [],
-    this.potentialCreators = const [],
-    this.currentStatus = CreatorStatus.available,
+    this.waitingFans = const [],
+    this.currentStatus = Status.online,
+    this.recentCallFan,
   });
 
   CreatorHomeState copyWith({
     PageState? status,
     String? error,
     List<String>? languages,
-    List<User>? managedCreators,
-    List<User>? favoriteCreators,
-    List<User>? callingCreators,
-    List<User>? potentialCreators,
+    List<User>? waitingFans,
     User? currentLoggedInUser,
-    CreatorStatus? currentStatus,
+    Status? currentStatus,
+    User? recentCallFan,
   }) {
     return CreatorHomeState(
       status: status ?? this.status,
       error: error ?? this.error,
       pageCommand: pageCommand,
-      managedCreators: managedCreators ?? this.managedCreators,
-      favoriteCreators: favoriteCreators ?? this.favoriteCreators,
-      callingCreators: callingCreators ?? this.callingCreators,
-      potentialCreators: potentialCreators ?? this.potentialCreators,
+      waitingFans: waitingFans ?? this.waitingFans,
       currentLoggedInUser: currentLoggedInUser ?? this.currentLoggedInUser,
       currentStatus: currentStatus ?? this.currentStatus,
+      recentCallFan: recentCallFan ?? this.recentCallFan,
     );
   }
 
@@ -52,11 +44,9 @@ class CreatorHomeState extends Equatable {
         status,
         error,
         pageCommand,
-        managedCreators,
-        favoriteCreators,
-        callingCreators,
-        potentialCreators,
+        waitingFans,
         currentLoggedInUser,
-        currentStatus
+        currentStatus,
+        recentCallFan,
       ];
 }

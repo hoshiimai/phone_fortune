@@ -1,10 +1,11 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/cupertino.dart' hide CupertinoTabScaffold, CupertinoTabBar;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+import '../../../core/managers/signaling.dart';
 import '../../../core/model/enum/enum_bottom_navigation_page.dart';
 import '../../../core/model/enum/enum_setting.dart';
 import '../../../utils/app_colors.dart';
@@ -128,5 +129,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    Get.put(Signaling()).connect();
   }
 }

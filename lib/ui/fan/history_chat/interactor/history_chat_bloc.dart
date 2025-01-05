@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_event_transformers/bloc_event_transformers.dart';
+import 'package:callmobile/core/repository/interface/i_call_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/model/enum/type_call.dart';
 import '../../../../core/model/response/error_from_server.dart';
 import '../../../../core/model/response/model/room.dart';
-import '../../../../core/model/response/room_history_data.dart';
+import '../../../../core/repository/interface/i_auth_repository.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../base/interactor/page_command.dart';
 import '../../../base/interactor/page_states.dart';
@@ -18,108 +19,10 @@ part 'history_chat_event.dart';
 part 'history_chat_state.dart';
 
 class HistoryChatBloc extends Bloc<HistoryChatEvent, HistoryChatState> {
-  final rooms = [
-    Room(
-        id: 1,
-        rootId: 1,
-        userId: 1,
-        creatorId: 1,
-        status: TypeCall.finished,
-        liveAt: DateTime.now(),
-        callTiming: 180,
-        callFee: 100,
-        totalTipAmount: 100,
-        callFeeCreator: 100,
-        totalTipAmountCreator: 100,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now()),
-    Room(
-      id: 2,
-      rootId: 2,
-      userId: 1,
-      creatorId: 1,
-      status: TypeCall.finished,
-      liveAt: DateTime.now(),
-      callTiming: 180,
-      callFee: 100,
-      totalTipAmount: 100,
-      callFeeCreator: 100,
-      totalTipAmountCreator: 100,
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      updatedAt: DateTime.now().subtract(const Duration(days: 1)),),
-    Room(
-      id: 3,
-      rootId: 3,
-      userId: 1,
-      creatorId: 1,
-      status: TypeCall.cancel,
-      liveAt: DateTime.now(),
-      callTiming: 180,
-      callFee: 100,
-      totalTipAmount: 100,
-      callFeeCreator: 100,
-      totalTipAmountCreator: 100,
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      updatedAt: DateTime.now().subtract(const Duration(days: 1)),),
-    Room(
-      id: 3,
-      rootId: 3,
-      userId: 1,
-      creatorId: 1,
-      status: TypeCall.finished,
-      liveAt: DateTime.now(),
-      callTiming: 180,
-      callFee: 100,
-      totalTipAmount: 100,
-      callFeeCreator: 100,
-      totalTipAmountCreator: 100,
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      updatedAt: DateTime.now().subtract(const Duration(days: 1)),),
-    Room(
-      id: 4,
-      rootId: 4,
-      userId: 1,
-      creatorId: 1,
-      status: TypeCall.finished,
-      liveAt: DateTime.now(),
-      callTiming: 180,
-      callFee: 100,
-      totalTipAmount: 100,
-      callFeeCreator: 100,
-      totalTipAmountCreator: 100,
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      updatedAt: DateTime.now().subtract(const Duration(days: 2)),),
-    Room(
-      id: 5,
-      rootId: 5,
-      userId: 1,
-      creatorId: 1,
-      status: TypeCall.cancel,
-      liveAt: DateTime.now(),
-      callTiming: 180,
-      callFee: 100,
-      totalTipAmount: 100,
-      callFeeCreator: 100,
-      totalTipAmountCreator: 100,
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      updatedAt: DateTime.now().subtract(const Duration(days: 2)),),
-    Room(
-      id: 6,
-      rootId: 6,
-      userId: 1,
-      creatorId: 1,
-      status: TypeCall.finished,
-      liveAt: DateTime.now(),
-      callTiming: 180,
-      callFee: 100,
-      totalTipAmount: 100,
-      callFeeCreator: 100,
-      totalTipAmountCreator: 100,
-      createdAt: DateTime.now().subtract(const Duration(days: 3)),
-      updatedAt: DateTime.now().subtract(const Duration(days: 3)),)
-  ];
 
-  HistoryChatBloc()
+  final ICallRepository callRepository;
+
+  HistoryChatBloc({required this.callRepository,})
       : super(const HistoryChatState(error: '', status: PageState.initial)) {
     on<Init>(_onInit);
     on<OnLoadHistory>(_onLoadHistory, transformer: throttle(const Duration(seconds: 1)));
@@ -132,8 +35,8 @@ class HistoryChatBloc extends Bloc<HistoryChatEvent, HistoryChatState> {
 
     response.fold(
       (error) => _handleError(error, emit, PageState.failure),
-      (roomHistoryData) =>
-          _handleSuccess(roomHistoryData: roomHistoryData, emit: emit, status: PageState.success),
+      (rooms) =>
+          _handleSuccess(roomsRsp: rooms, emit: emit, status: PageState.success),
     );
   }
 
@@ -145,8 +48,8 @@ class HistoryChatBloc extends Bloc<HistoryChatEvent, HistoryChatState> {
       final response = await _fetchRoomHistory(1, event.fromDateTime);
       response.fold((error) {
 
-      }, (roomHistoryData) {
-        final rooms = filterRooms(roomHistoryData.rooms);
+      }, (roomsRsp) {
+        final rooms = filterRooms(roomsRsp);
         final mergedRooms = (List<Room>.from(state.rooms)..addAll(rooms));
         final sortedRooms = _sortRoomsByDate(mergedRooms);
 
@@ -172,13 +75,13 @@ class HistoryChatBloc extends Bloc<HistoryChatEvent, HistoryChatState> {
 
     response.fold(
       (error) => _handleError(error, emit, PageState.failure),
-      (roomHistoryData) => _handleLoadMoreSuccess(
-          roomHistoryData: roomHistoryData, emit: emit, isReset: event.isReset),
+      (rooms) => _handleLoadMoreSuccess(
+          roomsRsp: rooms, emit: emit, isReset: event.isReset),
     );
   }
 
-  Future<Either<ErrorFromServer, RoomHistoryData>> _fetchRoomHistory(int page, DateTime? fromDateTime) async {
-    return right(RoomHistoryData(totalItems: 10, totalPages: 1, currentPage: 1, rooms: rooms));
+  Future<Either<ErrorFromServer, List<Room>>> _fetchRoomHistory(int page, DateTime? fromDateTime) async {
+    return callRepository.getCallHistory();
   }
 
   void _handleError(ErrorFromServer error, Emitter<HistoryChatState> emit, PageState status) {
@@ -187,26 +90,26 @@ class HistoryChatBloc extends Bloc<HistoryChatEvent, HistoryChatState> {
   }
 
   void _handleSuccess({
-    required RoomHistoryData roomHistoryData,
+    required List<Room> roomsRsp,
     required Emitter<HistoryChatState> emit,
     required PageState status,
   }) {
-    final rooms = _sortRoomsByDate(filterRooms(roomHistoryData.rooms));
+    final rooms = _sortRoomsByDate(filterRooms(roomsRsp));
     emit(state.copyWith(
         status: status,
         groupRoomsByDate: groupRoomsByDate(rooms),
         rooms: rooms,
-        totalPages: roomHistoryData.totalPages,
-        totalCount: roomHistoryData.totalItems,
-        currentPage: roomHistoryData.currentPage));
+        totalPages: 1,
+        totalCount: roomsRsp.length,
+        currentPage: 1));
   }
 
   void _handleLoadMoreSuccess({
-    required RoomHistoryData roomHistoryData,
+    required List<Room> roomsRsp,
     required Emitter<HistoryChatState> emit,
     required bool isReset,
   }) {
-    final rooms = filterRooms(roomHistoryData.rooms);
+    final rooms = filterRooms(roomsRsp);
     final mergedRooms = isReset ? rooms : (List<Room>.from(state.rooms)..addAll(rooms));
     final sortedRooms = _sortRoomsByDate(mergedRooms);
 
@@ -214,9 +117,9 @@ class HistoryChatBloc extends Bloc<HistoryChatEvent, HistoryChatState> {
         loadMoreStatus: PageState.success,
         groupRoomsByDate: groupRoomsByDate(sortedRooms),
         rooms: sortedRooms,
-        totalPages: roomHistoryData.totalPages,
-        totalCount: roomHistoryData.totalItems,
-        currentPage: roomHistoryData.currentPage));
+        totalPages: 1,
+        totalCount: roomsRsp.length,
+        currentPage: 1));
   }
 
   List<Room> filterRooms(List<Room> rooms) {

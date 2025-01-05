@@ -5,11 +5,11 @@ abstract class CreatorProfileEvent extends Equatable {
 }
 
 class Init extends CreatorProfileEvent {
-  final User? user;
-  const Init(this.user);
+  final User? creator;
+  const Init(this.creator);
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [creator];
 }
 
 class OnTapHeart extends CreatorProfileEvent {
@@ -40,4 +40,21 @@ class OnClearPageCommand extends CreatorProfileEvent {
 
   @override
   List<Object> get props => [];
+}
+
+class OnGetCreatorDetail extends CreatorProfileEvent {
+  final int creatorId;
+  const OnGetCreatorDetail({required this.creatorId});
+
+  @override
+  List<Object> get props => [creatorId];
+}
+
+class OnRegisterCall extends CreatorProfileEvent {
+  final int creatorId;
+  final Function onRegisterSuccess;
+  const OnRegisterCall({required this.creatorId, required this.onRegisterSuccess});
+
+  @override
+  List<Object> get props => [creatorId, onRegisterSuccess];
 }

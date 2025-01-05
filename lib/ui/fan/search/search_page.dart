@@ -1,4 +1,4 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/ui/widgets/app_listview.dart';
 import 'package:callmobile/ui/widgets/common/creator_item.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 import '../../../core/model/enum/enum_bottom_navigation_page.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_dimensions.dart';
@@ -57,7 +57,7 @@ class SearchPageState extends State<SearchPage> {
           builder: (BuildContext context, SearchState state) {
             return Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: CustomAppBar(title: LocaleKey.searchTitle.tr, isShowLogo: true),
+              appBar: const CustomAppBar(title: 'クリエイター検索', isShowLogo: true),
               body: BasePage(
                 unFocusWhenTouchOutsideInput: true,
                 child: Padding(
@@ -67,7 +67,7 @@ class SearchPageState extends State<SearchPage> {
                       Container(decoration: AppDimensions.decoration),
                       AppTextFieldSearch(
                         controller: keywordController,
-                        hintText: LocaleKey.searchTitle.tr,
+                        hintText: 'クリエイター検索',
                         gradient: AppColors.gradient(),
                         textStyleColor: AppColors.black,
                         onCompleted: (value) {
@@ -107,7 +107,7 @@ class SearchPageState extends State<SearchPage> {
   Widget _emptyView(BuildContext context, SearchState state) {
     return Center(
       child: Text(
-        (state.keyword?.isEmpty ?? true) ? '' : LocaleKey.noCreator.tr,
+        (state.keyword?.isEmpty ?? true) ? '' : 'クリエイターがありません。',
         style: AppStyles.fontSize16(fontWeight: FontWeight.w400, color: AppColors.black),
       ),
     );

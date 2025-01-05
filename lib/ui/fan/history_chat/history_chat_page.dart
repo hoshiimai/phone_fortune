@@ -1,9 +1,9 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
@@ -39,7 +39,7 @@ class _HistoryChatPageState extends State<HistoryChatPage> {
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: CustomAppBar(
-              title: widget.title ?? LocaleKey.historyChat.tr,
+              title: widget.title ?? '会話履歴',
               iconLeading: AppAssets.ic_back_2_svg,
               isShowLogo: widget.isShowLogo,
             ),
@@ -149,7 +149,7 @@ class _HistoryChatPageState extends State<HistoryChatPage> {
           (((Get.height - 352) / 2) - 32).toInt().height,
           Center(
             child: Text(
-              LocaleKey.noData.tr,
+              'データなし',
               style: AppStyles.fontSize16(fontWeight: FontWeight.w400, color: AppColors.black),
             ),
           ),

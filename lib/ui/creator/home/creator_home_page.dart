@@ -1,6 +1,9 @@
 import 'package:callmobile/core/model/business/call_history.dart';
 import 'package:callmobile/core/model/business/fan_waiting_info.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/core/model/enum/enum_role.dart';
+import 'package:callmobile/core/model/response/model/history_call.dart';
+import 'package:callmobile/core/model/response/model/user.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/ui/creator/home/component/status_setting.dart';
 import 'package:callmobile/ui/creator/home/interactor/creator_home_bloc.dart';
 import 'package:callmobile/utils/app_assets.dart';
@@ -10,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 import '../../../core/model/enum/enum_bottom_navigation_page.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_dimensions.dart';
 import '../../../utils/app_pages.dart';
@@ -21,7 +24,6 @@ import '../../widgets/common/home_appbar.dart';
 import '../main/interactor/main_creator_bloc.dart';
 import 'component/recent_call.dart';
 import 'component/schedule_setting.dart';
-import 'component/top_ranking.dart';
 import 'component/waiting_section.dart';
 
 class CreatorHomePage extends StatefulWidget {
@@ -34,24 +36,6 @@ class CreatorHomePage extends StatefulWidget {
 }
 
 class CreatorHomePageState extends State<CreatorHomePage> {
-
-  final infos = [
-    FanWaitingInfo(name: 'シルバーマン・サックス', title: 'ユーザーを覚えておいてください', description: 'こんにちは！テキストが入りますテキストが入りますテキストが入りますテキストが入ります', waitingInMinute: 40, historyCalls: [
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 1, hours: 2, minutes: 5)), durationInMin: 12),
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 3, hours: 4, minutes:7)), durationInMin: 30),
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 5, hours: 1, minutes:9)), durationInMin: 41)
-    ]),
-    FanWaitingInfo(name: 'へんべえ', title: 'ユーザーを覚えておいてください', description: 'こんにちは！テキストが入りますテキストが入りますテキストが入りますテキストが入ります', waitingInMinute: 33, historyCalls: [
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 1, hours: 2, minutes: 5)), durationInMin: 12),
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 3, hours: 4, minutes:7)), durationInMin: 30),
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 5, hours: 1, minutes:9)), durationInMin: 41)
-    ]),
-    FanWaitingInfo(name: 'へんべえ', title: 'ユーザーを覚えておいてください', description: 'こんにちは！テキストが入りますテキストが入りますテキストが入りますテキストが入ります', waitingInMinute: 40, historyCalls: [
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 1, hours: 2, minutes: 5)), durationInMin: 12),
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 3, hours: 4, minutes:7)), durationInMin: 30),
-      CallHistory(date: DateTime.now().subtract(const Duration(days: 5, hours: 1, minutes:9)), durationInMin: 41)
-    ])
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +64,7 @@ class CreatorHomePageState extends State<CreatorHomePage> {
                 extendBodyBehindAppBar: true,
                 appBar: HomeAppbar(
                   icon: AppAssets.ic_renew_svg,
-                  title: LocaleKey.home.tr,
+                  title: 'ホーム',
                   isShowLogo: true,
                   height: 98,
                 ),
@@ -115,14 +99,15 @@ class CreatorHomePageState extends State<CreatorHomePage> {
                                 16.height,
                                 const ScheduleSetting(),
                                 16.height,
-                                RecentCall(callDurationInSec: 1859, info: FanWaitingInfo(name: 'シルバーマン・サックス', title: 'ユーザーを覚えておいてください', description: 'こんにちは！テキストが入りますテキストが入りますテキストが入りますテキストが入ります', waitingInMinute: 35, historyCalls: [
-                                  CallHistory(date: DateTime.now().subtract(const Duration(days: 1, hours: 2, minutes: 5)), durationInMin: 12),
-                                  CallHistory(date: DateTime.now().subtract(const Duration(days: 3, hours: 4, minutes:7)), durationInMin: 30),
-                                  CallHistory(date: DateTime.now().subtract(const Duration(days: 5, hours: 1, minutes:9)), durationInMin: 41)
-                                ])),
-                                16.height,
+                                if(state.recentCallFan != null)
+                                  ...[
+                                    RecentCall(
+                                        callDurationInSec: state.recentCallFan!.totalCallTime ?? 0,
+                                        fan: state.recentCallFan!),
+                                    16.height
+                                  ],
                                 WaitingSection(
-                                  infos: infos,
+                                  fans: state.waitingFans,
                                 )
                                 ,
                               ],

@@ -1,9 +1,9 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
-import '../../../../locale/locale_key.dart';
+
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_styles.dart';
 import '../../../widgets/app_text_field.dart';
@@ -45,7 +45,7 @@ class BioProfileState extends State<BioProfile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              LocaleKey.bioTitle.tr,
+              '紹介',
               style: AppStyles.fontSize14(
                 fontWeight: FontWeight.w600,
                 color: AppColors.black,
@@ -54,7 +54,7 @@ class BioProfileState extends State<BioProfile> {
             20.height,
             AppTextField(
               controller: bioController,
-              hintText: LocaleKey.bioTitle.tr,
+              hintText: '紹介',
               borderColor: AppColors.colorDEDEDE,
               textStyleColor: AppColors.black,
               textStyle: AppStyles.fontSize12(height: 20 / 12, color: AppColors.black),

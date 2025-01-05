@@ -1,6 +1,8 @@
 import 'dart:async';
 
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/core/model/business/gender_type.dart.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
+import 'package:callmobile/utils/app_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +11,7 @@ import 'package:get/get.dart';
 import '../../../core/model/enum/enum_role.dart';
 import '../../../core/model/enum/type_call.dart';
 import '../../../core/model/response/model/user.dart';
-import '../../../locale/locale_key.dart';
+
 
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
@@ -22,10 +24,8 @@ import '../../widgets/app_image.dart';
 import 'interactor/fan_profile_bloc.dart';
 
 class FanProfilePage extends StatefulWidget {
-  final User? user;
   const FanProfilePage({
     super.key,
-    required this.user,
   });
 
   @override
@@ -48,15 +48,16 @@ class _FanProfilePageState extends State<FanProfilePage> {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => Get.find<FanProfileBloc>()..add(Init(widget.user)),
+            create: (context) => Get.find<FanProfileBloc>()..add(const Init()),
           ),
         ],
         child: BlocConsumer<FanProfileBloc, FanProfileState>(
           listener: (BuildContext context, FanProfileState state) {},
           builder: (BuildContext context, FanProfileState state) {
-            final user = state.user;
-            final currentLoginUser = state.currentLoginUser;
-
+            final currentUser = state.currentLoginUser;
+            if(currentUser == null) {
+              return const SizedBox.shrink();
+            }
             return GestureDetector(
               onTap: () {
                 setState(() => isShowMore = false);
@@ -70,12 +71,11 @@ class _FanProfilePageState extends State<FanProfilePage> {
                   implyLeading: true,
                   iconLeading: AppAssets.ic_back_2_svg,
                   actions: [
-                    if (state.user == null)
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pushNamed(AppPages.fanProfileEdit),
-                        splashRadius: 24,
-                        icon: SvgPicture.asset(AppAssets.ic_edit_svg),
-                      )
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pushNamed(AppPages.fanProfileEdit),
+                      splashRadius: 24,
+                      icon: SvgPicture.asset(AppAssets.ic_edit_svg),
+                    )
                   ],
                 ),
                 backgroundColor: Colors.white,
@@ -99,42 +99,37 @@ class _FanProfilePageState extends State<FanProfilePage> {
                                           bottomRight: Radius.circular(20))),
                                 ),
                               ),
-                              _userAvatar(state),
+                              _userAvatar(currentUser),
                             ],
                           ),
                           20.height,
-                          Container(
-                            padding: 10.paddingAll,
-                            margin: 14.paddingHorizontal,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColors.colorF6F6F6),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '紹介',
-                                  style: AppStyles.fontSize14(
-                                      color: AppColors.color020617, fontWeight: FontWeight.w700),
-                                ),
-                                10.height,
-                                Text(
-                                  'こんにちは！テキストが入りますテキストが入りますテキストが入りますテキストが入ります',
-                                  style: AppStyles.fontSize12(
-                                      color: AppColors.color020617, height: 1.5),
-                                ),
-                              ],
+                          if (currentUser.welcomeMessages?.isNotEmpty ?? false)
+                            Container(
+                              padding: 10.paddingAll,
+                              margin: 14.paddingHorizontal,
+                              width: double.infinity,
+                              decoration:
+                                  BoxDecoration(borderRadius: BorderRadius.circular(10), color: AppColors.colorF6F6F6),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '紹介',
+                                    style:
+                                        AppStyles.fontSize14(color: AppColors.color020617, fontWeight: FontWeight.w700),
+                                  ),
+                                  10.height,
+                                  Text(
+                                    currentUser.welcomeMessages!,
+                                    style: AppStyles.fontSize12(color: AppColors.color020617, height: 1.5),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
-                    if (user?.role == Role.creator && currentLoginUser?.role != Role.creator)
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: _callCreator(state),
-                      ),
                   ],
                 ),
               ),
@@ -142,16 +137,14 @@ class _FanProfilePageState extends State<FanProfilePage> {
           },
         ));
   }
-
-  Align _userAvatar(FanProfileState state) {
-    const imagePath = AppAssets.bg_fan_avatar_png;
+  Align _userAvatar(User currentUser) {
     return Align(
       alignment: Alignment.topCenter,
       child: Column(
         children: [
           60.height,
-          const AppImage(
-            image: imagePath,
+          AppImage(
+            image: currentUser.getAvatarPath(),
             width: 120,
             height: 120,
             radius: 100,
@@ -161,7 +154,7 @@ class _FanProfilePageState extends State<FanProfilePage> {
             children: [
               16.height,
               Text(
-                'AKIRAaa',
+                currentUser.fullName ?? '',
                 style: AppStyles.fontSize20(fontWeight: FontWeight.w600, color: AppColors.white),
                 textAlign: TextAlign.center,
               ),
@@ -175,7 +168,7 @@ class _FanProfilePageState extends State<FanProfilePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '男',
+                      GenderType.fromInt(currentUser.gender!).shortDescription(),
                       style: AppStyles.fontSize12(color: AppColors.color616161),
                     ),
                     10.width,
@@ -186,7 +179,7 @@ class _FanProfilePageState extends State<FanProfilePage> {
                     ),
                     10.width,
                     Text(
-                      '1999 年 2 月 28 日',
+                      AppUtils.formatDate(AppUtils.convertToDate(currentUser.birthdate!), format: 'yyyy 年 MM 月 dd 日'),
                       style: AppStyles.fontSize12(color: AppColors.color616161),
                     ),
                   ],
@@ -196,51 +189,6 @@ class _FanProfilePageState extends State<FanProfilePage> {
           ),
           20.height,
         ],
-      ),
-    );
-  }
-
-  Widget _callCreator(FanProfileState state) {
-    final typeCall = TypeCall.getTypeCall(creatorRoomLength: state.user?.creatorRoom?.length ?? 0);
-    final isOnline = state.user?.isOnline ?? false;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppDimensions.marginLeft, 0, AppDimensions.marginLeft, 10),
-      child: AppButton(
-        onTap: isOnline
-            ? () {
-                // Get.find<Signaling>().processCall(state.user!);
-              }
-            : null,
-        height: 62,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0),
-            offset: const Offset(0, 0),
-            blurRadius: 0,
-          ),
-        ],
-        gradient: isOnline ? typeCall.gradientColor : AppColors.gradientOffline(),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Text(
-              isOnline ? typeCall.text : LocaleKey.callOffline.tr,
-              style: AppStyles.fontSize20(
-                fontWeight: FontWeight.w800,
-                height: 30 / 20,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            // Align(
-            //   alignment: Alignment.centerLeft,
-            //   child: SvgPicture.asset(
-            //     isOnline ? typeCall.icon : AppAssets.ic_call_offline_svg,
-            //     width: 24,
-            //     height: 24,
-            //   ),
-            // )
-          ],
-        ),
       ),
     );
   }

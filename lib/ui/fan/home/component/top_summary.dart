@@ -1,4 +1,5 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/core/model/response/model/user.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/utils/app_assets.dart';
 import 'package:callmobile/utils/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,8 @@ import 'package:flutter/material.dart';
 import '../../../../utils/app_colors.dart';
 
 class TopSummary extends StatelessWidget {
-  const TopSummary({super.key});
+  final User? user;
+  const TopSummary({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +126,7 @@ class TopSummary extends StatelessWidget {
                     ),
                     6.width,
                     Text(
-                      '300 Pt',
+                      '${user?.pointBalance ?? 0} Pt',
                       style: AppStyles.fontSize14(color: AppColors.colorFF7B98, fontWeight: FontWeight.w600),
                     )
                   ],

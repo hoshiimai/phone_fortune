@@ -33,7 +33,7 @@ class MainCreatorBloc extends Bloc<MainCreatorEvent, MainCreatorState> {
     on<OnGetCreatorDetail>(_onGetCreatorDetail);
     on<OnPageNavigation>(_onPageNavigation);
     on<OnClearPageNavigation>(_onClearPageNavigation);
-
+    on<OnUpdateWaitingCount>(_onUpdateWaitingCount);
   }
 
   FutureOr<void> _onPageNavigation(OnPageNavigation event, Emitter<MainCreatorState> emit) {
@@ -61,22 +61,22 @@ class MainCreatorBloc extends Bloc<MainCreatorEvent, MainCreatorState> {
   FutureOr<void> _onGetUserDetail(
       OnGetUserDetail event, Emitter<MainCreatorState> emit) async {
     final appShared = Get.find<AppShared>();
-    // final response =
-    //     await authRepository.getProfile();
-    // response.fold((error) {}, (user) {
-    //   appShared.setUser(user);
-    //   emit(state.copyWith(
-    //     user: user,
-    //   ));
-    //   event.onGetUserSuccess?.call(user);
-    // });
-    //
+    final response =
+        await authRepository.getProfile();
+    response.fold((error) {}, (user) {
+      appShared.setUser(user);
+      emit(state.copyWith(
+        user: user,
+      ));
+      event.onGetUserSuccess?.call(user);
+    });
+
     // await Get.find<FirebaseMessagingManager>().fetchAndSaveFcmToken();
     // final fcmToken = appShared.getTokenFcm();
     // if(fcmToken?.isNotEmpty ?? false) {
     //   authRepository.updateFcmToken(fcmToken: fcmToken!);
     // }
-    //
+
     // final responseNotification =
     //     await notificationRepository.getNotificationUnread();
     // responseNotification.fold((error) {}, (notification) {
@@ -98,5 +98,11 @@ class MainCreatorBloc extends Bloc<MainCreatorEvent, MainCreatorState> {
     //   add(OnUpdateCreator(CreatorUpdate(updateType: CreatorUpdateType.general, creator: creator)));
     //   event.onGetCreatorSuccess?.call(creator);
     // });
+  }
+
+
+  FutureOr<void> _onUpdateWaitingCount(
+      OnUpdateWaitingCount event, Emitter<MainCreatorState> emit) {
+    emit(state.copyWith(waitingCount: event.count));
   }
 }

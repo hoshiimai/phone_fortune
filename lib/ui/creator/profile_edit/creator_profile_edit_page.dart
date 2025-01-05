@@ -1,10 +1,10 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-import '../../../core/model/enum/enum_role.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
@@ -16,7 +16,7 @@ import '../../widgets/base/app_body.dart';
 import 'component/avatar_profile.dart';
 import 'component/banner_profile.dart';
 import 'component/bio_profile.dart';
-import 'component/nickname_profile.dart';
+import 'component/name_profile.dart';
 import 'interactor/creator_profile_edit_bloc.dart';
 
 class CreatorProfileEditPage extends StatefulWidget {
@@ -30,10 +30,23 @@ class CreatorProfileEditPage extends StatefulWidget {
 
 class CreatorProfileEditPageState extends State<CreatorProfileEditPage> {
 
+  final ImagePicker picker = ImagePicker();
+  TextEditingController? nameController;
+  TextEditingController? welcomeMessageController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    welcomeMessageController = TextEditingController();
+  }
+
   @override
   void dispose() {
-    Get.delete<CreatorProfileEditBloc>();
     super.dispose();
+    nameController?.dispose();
+    welcomeMessageController?.dispose();
+    Get.delete<CreatorProfileEditBloc>();
   }
 
   @override
@@ -44,17 +57,17 @@ class CreatorProfileEditPageState extends State<CreatorProfileEditPage> {
         listenWhen: (previous, current) => previous.status != current.status,
         listener: (BuildContext context, CreatorProfileEditState state) {},
         builder: (BuildContext context, CreatorProfileEditState state) {
-          if (state.user == null) {
+          if (state.currentLoginUser == null) {
             return const SizedBox.shrink();
           }
           return AppBody(
             pageState: state.status,
             success: Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: CustomAppBar(
+              appBar: const CustomAppBar(
                 implyLeading: true,
                 iconLeading: AppAssets.ic_back_2_svg,
-                title: LocaleKey.titleEditProfile.tr,
+                title: 'マイページ編集',
               ),
               floatingActionButton: Padding(
                 padding: 32.paddingBottom.copyWith(left: 20, right: 20),
@@ -72,7 +85,7 @@ class CreatorProfileEditPageState extends State<CreatorProfileEditPage> {
                       },
                       width: (Get.width - 50) / 2,
                       height: 55,
-                      title: LocaleKey.register.tr,
+                      title: '登録する',
                     ),
                     const Spacer(),
                     AppButton(
@@ -80,7 +93,7 @@ class CreatorProfileEditPageState extends State<CreatorProfileEditPage> {
                       backgroundColor: AppColors.color9B9B9B,
                       width: (Get.width - 50) / 2,
                       height: 55,
-                      title: LocaleKey.cancel.tr,
+                      title: 'キャンセル',
                     )
                   ],
                 ),
@@ -107,9 +120,9 @@ class CreatorProfileEditPageState extends State<CreatorProfileEditPage> {
                               45.height,
                               AvatarProfile(),
                               45.height,
-                              NickNameProfile(nickName: state.nickName),
+                              NameProfile(name: state.name),
                               27.height,
-                              BioProfile(welcomeMessages: state.welcomeMessages),
+                              BioProfile(welcomeMessages: state.welcomeMessage),
                             ],
                           ),
                         ),

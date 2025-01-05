@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:callmobile/core/model/response/model/user.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/managers/permission_manager.dart';
-import '../../../../locale/locale_key.dart';
+
 import '../../../../utils/app_assets.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_styles.dart';
@@ -31,7 +31,7 @@ class AvatarProfile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              LocaleKey.avatarTitle.tr,
+              'アバター',
               style: AppStyles.fontSize14(
                 fontWeight: FontWeight.w600,
                 color: AppColors.black,
@@ -57,7 +57,7 @@ class AvatarProfile extends StatelessWidget {
                           borderRadius: 100.borderRadiusAll,
                         ),
                         child: AppImage(
-                          image: state.user!.getAvatarPath(),
+                          image: state.avatar?.path ?? state.currentLoginUser!.getAvatarPath(),
                           width: 120,
                           height: 120,
                           fit: BoxFit.cover,

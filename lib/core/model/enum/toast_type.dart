@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:callmobile/locale/locale_key.dart';
+
 
 enum ToastType {
   success(Colors.green),
@@ -29,9 +29,9 @@ enum ToastType {
   Widget get title {
     switch (this) {
       case ToastType.success:
-        return Text(LocaleKey.success.tr, style: TextStyle(color: color));
+        return Text('成功', style: TextStyle(color: color));
       case ToastType.error:
-        return Text(LocaleKey.error.tr, style: TextStyle(color: color));
+        return Text('エラー', style: TextStyle(color: color));
     }
   }
 }

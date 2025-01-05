@@ -1,25 +1,20 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/ui/widgets/app_button.dart';
 import 'package:callmobile/ui/widgets/app_image.dart';
 import 'package:callmobile/ui/widgets/common/fan_waiting_item.dart';
 import 'package:callmobile/utils/app_assets.dart';
 import 'package:callmobile/utils/app_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
-import '../../../../core/model/business/fan_waiting_info.dart';
+import '../../../../core/model/response/model/user.dart';
 import '../../../../utils/app_colors.dart';
-import '../../../../utils/app_pages.dart';
-import '../../../fan/call/binding/binding/call_binding.dart';
-
 class RecentCall extends StatelessWidget {
   final int callDurationInSec;
-  final FanWaitingInfo info;
+  final User fan;
 
   const RecentCall({
     super.key,
-    required this.info,
+    required this.fan,
     required this.callDurationInSec,
   });
 
@@ -57,46 +52,38 @@ class RecentCall extends StatelessWidget {
               gradient: AppColors.gradientSwitchSelected(),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: GestureDetector(
-              onTap: () {
-                // TODO: Remove testing call
-                CallBinding().dependencies();
-                Get.toNamed(AppPages.call,
-                    arguments: {'user': null, 'isCaller': false});
-              },
-              child: Container(
-                margin: 1.paddingAll,
-                padding: 10.paddingAll,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: AppColors.white,
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: 8.paddingRight,
-                      child: const AppImage(
-                        image: AppAssets.bg_fan_avatar_png,
-                        width: 30,
-                        height: 30,
-                        fit: BoxFit.cover,
-                        radius: 100,
-                      ),
+            child: Container(
+              margin: 1.paddingAll,
+              padding: 10.paddingAll,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: AppColors.white,
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: 8.paddingRight,
+                    child: AppImage(
+                      image: fan.getAvatarPath(),
+                      width: 30,
+                      height: 30,
+                      fit: BoxFit.cover,
+                      radius: 100,
                     ),
-                    Text(
-                      info.name,
-                      style: AppStyles.fontSize14(
-                          color: AppColors.color020617, fontWeight: FontWeight.w600, height: 21 / 14),
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ],
-                ),
+                  ),
+                  Text(
+                    fan.fullName ?? '',
+                    style: AppStyles.fontSize14(
+                        color: AppColors.color020617, fontWeight: FontWeight.w600, height: 21 / 14),
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
               ),
             ),
           ),
           FanWaitingItem(
             index: 1,
-            info: info,
+            fan: fan,
             isShow: true,
             callDurationInSec: callDurationInSec,
           ),

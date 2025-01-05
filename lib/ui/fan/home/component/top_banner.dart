@@ -1,4 +1,4 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/utils/app_assets.dart';
 import 'package:callmobile/utils/app_styles.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:callmobile/core/repository/call_repository.dart';
+import 'package:callmobile/core/repository/interface/i_call_repository.dart';
 import 'package:dio/dio.dart';
 
 import 'package:get/get.dart';
@@ -10,9 +12,6 @@ import 'package:callmobile/core/managers/connectivity_manager.dart';
 import 'package:callmobile/core/managers/permission_manager.dart';
 
 import 'package:callmobile/core/repository/auth_repository.dart';
-
-import 'package:callmobile/deeplink/deeplink_manager.dart';
-import 'package:callmobile/locale/translation_manager.dart';
 import 'package:callmobile/utils/app_api_config.dart';
 import 'package:callmobile/utils/app_shared.dart';
 

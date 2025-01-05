@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:callmobile/extensions/double_extensions.dart';
-import 'package:callmobile/extensions/string_extensions.dart';
+import 'package:callmobile/utils/extensions/double_extensions.dart';
+import 'package:callmobile/utils/extensions/string_extensions.dart';
 import 'package:callmobile/ui/widgets/app_circular_progress.dart';
 import 'package:callmobile/utils/app_colors.dart';
 

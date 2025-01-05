@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
@@ -59,8 +59,8 @@ class InfoViewState extends State<InfoView> {
           final user = state.user;
           return Scaffold(
             extendBodyBehindAppBar: true,
-            appBar: CustomAppBar(
-                title: LocaleKey.idPasswordTitle.tr, iconLeading: AppAssets.ic_back_2_svg),
+            appBar: const CustomAppBar(
+                title: 'ID&パスワード', iconLeading: AppAssets.ic_back_2_svg),
             body: BasePage(
               child: Padding(
                 padding: AppDimensions.paddingTop,
@@ -74,10 +74,10 @@ class InfoViewState extends State<InfoView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       30.height,
-                      ItemInfo(title: LocaleKey.idHint.tr, data: user?.id.toString() ?? ''),
+                      ItemInfo(title: 'ユーザーID', data: user?.id.toString() ?? ''),
                       20.height,
                       ItemInfo(
-                        title: LocaleKey.emailHint.tr,
+                        title: 'メールアドレス',
                         data: user?.email ?? '',
                         showIcon: user?.snsId?.isEmpty ?? true,
                         onTap: user?.snsId?.isEmpty ?? true
@@ -88,14 +88,14 @@ class InfoViewState extends State<InfoView> {
                                   if (!context.mounted) {
                                     return;
                                   }
-                                  showUpdateSuccessDialog(context, LocaleKey.changeEmailSuccess.tr);
+                                  showUpdateSuccessDialog(context, 'メールアドレスを変更しました');
                                 }
                               }
                             : null,
                       ),
                       20.height,
                       ItemInfo(
-                        title: LocaleKey.passwordHint.tr,
+                        title: 'パスワード',
                         data: '********',
                         showIcon: user?.snsId?.isEmpty ?? true,
                         onTap: user?.snsId?.isEmpty ?? true

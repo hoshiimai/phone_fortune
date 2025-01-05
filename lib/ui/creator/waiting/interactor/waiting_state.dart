@@ -1,17 +1,17 @@
 part of 'waiting_bloc.dart';
 
 class WaitingState extends Equatable {
-  final PageState loadingState;
+  final PageState status;
   final String error;
   final PageCommand? pageCommand;
-  final List<FanWaitingInfo> fans;
+  final List<User> fans;
   final PageState loadingMoreState;
   final int currentPage;
   final int totalPage;
   final int totalCreators;
 
   const WaitingState({
-    required this.loadingState,
+    required this.status,
     required this.error,
     this.pageCommand,
     this.fans = const [],
@@ -22,9 +22,9 @@ class WaitingState extends Equatable {
   });
 
   WaitingState copyWith({
-    PageState? loadingState,
+    PageState? status,
     String? error,
-    List<FanWaitingInfo>? fans,
+    List<User>? fans,
     PageState? loadingMoreState,
     bool? isLoadingMore,
     int? currentPage,
@@ -32,7 +32,7 @@ class WaitingState extends Equatable {
     int? totalCreators,
   }) {
     return WaitingState(
-      loadingState: loadingState ?? this.loadingState,
+      status: status ?? this.status,
       error: error ?? this.error,
       pageCommand: pageCommand,
       fans: fans ?? this.fans,
@@ -44,5 +44,5 @@ class WaitingState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [loadingState, error, pageCommand, fans, loadingMoreState, loadingMoreState, currentPage, totalPage, totalCreators];
+  List<Object?> get props => [status, error, pageCommand, fans, loadingMoreState, loadingMoreState, currentPage, totalPage, totalCreators];
 }

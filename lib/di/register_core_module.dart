@@ -36,4 +36,8 @@ Future<void> _registerCoreModule() async {
   await Get.putAsync<IAuthRepository>(() async {
     return AuthRepository(Get.find<ApiClient>());
   }, permanent: true);
+
+  await Get.putAsync<ICallRepository>(() async {
+    return CallRepository(Get.find<ApiClient>());
+  }, permanent: true);
 }

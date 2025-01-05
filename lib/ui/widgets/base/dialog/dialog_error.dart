@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:callmobile/locale/locale_key.dart';
+
 
 class DialogError extends StatelessWidget {
   final String message;
@@ -24,7 +24,7 @@ class DialogError extends StatelessWidget {
       actions: [
         CupertinoDialogAction(
           onPressed: onConfirmPressed ?? () => Navigator.pop(context),
-          child: Text(textConfirm ?? LocaleKey.ok.tr),
+          child: Text(textConfirm ?? 'OK'),
         ),
       ],
     );

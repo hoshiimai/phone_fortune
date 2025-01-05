@@ -1,25 +1,27 @@
-import 'dart:async';
+import 'dart:io';
 
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/core/model/response/model/user.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
+import 'package:callmobile/ui/widgets/base/app_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+import '../../../core/managers/permission_manager.dart';
 import '../../../core/model/business/gender_type.dart.dart';
 import '../../../core/model/business/icon_type.dart';
-import '../../../core/model/enum/enum_role.dart';
-import '../../../core/model/enum/type_call.dart';
-import '../../../core/model/response/model/user.dart';
-import '../../../locale/locale_key.dart';
+
 
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
-import '../../../utils/app_dimensions.dart';
 
 import '../../../utils/app_styles.dart';
 import '../../../utils/app_utils.dart';
+import '../../creator/profile_edit/component/image_resource_dialog.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_image.dart';
 import '../../widgets/app_radio_button_group.dart';
@@ -27,11 +29,8 @@ import '../../widgets/app_text_field.dart';
 import 'interactor/fan_profile_edit_bloc.dart';
 
 class FanProfileEditPage extends StatefulWidget {
-  final User? user;
-
   const FanProfileEditPage({
     super.key,
-    required this.user,
   });
 
   @override
@@ -39,21 +38,25 @@ class FanProfileEditPage extends StatefulWidget {
 }
 
 class _FanProfileEditPageState extends State<FanProfileEditPage> {
-  bool isShowMore = false;
-  StreamSubscription? currentLoginUserSubscription;
+  final ImagePicker picker = ImagePicker();
   TextEditingController? birthDateController;
+  TextEditingController? nameController;
+  TextEditingController? welcomeMessageController;
 
   @override
   void initState() {
     super.initState();
     birthDateController = TextEditingController();
+    nameController = TextEditingController();
+    welcomeMessageController = TextEditingController();
   }
 
   @override
   void dispose() {
     super.dispose();
-    currentLoginUserSubscription?.cancel();
     birthDateController?.dispose();
+    nameController?.dispose();
+    welcomeMessageController?.dispose();
     Get.delete<FanProfileEditBloc>();
   }
 
@@ -62,7 +65,10 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => Get.find<FanProfileEditBloc>()..add(Init(widget.user)),
+            create: (context) => Get.find<FanProfileEditBloc>()..add(Init(onInitCompleted: (currentUser) {
+              nameController?.text = currentUser.fullName ?? '';
+              welcomeMessageController?.text = currentUser.welcomeMessages ?? '';
+            })),
           ),
         ],
         child: BlocConsumer<FanProfileEditBloc, FanProfileEditState>(
@@ -73,14 +79,9 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                 : '';
           },
           builder: (BuildContext context, FanProfileEditState state) {
-            final user = state.user;
-            final currentLoginUser = state.currentLoginUser;
-
-            return GestureDetector(
-              onTap: () {
-                setState(() => isShowMore = false);
-              },
-              child: Scaffold(
+            return AppBody(
+              pageState: state.status,
+              success: Scaffold(
                 extendBodyBehindAppBar: true,
                 appBar: CustomAppBar(
                   onBack: () {
@@ -110,7 +111,7 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                           bottomRight: Radius.circular(20))),
                                 ),
                               ),
-                              _userAvatar(state),
+                              _userAvatar(context, state),
                             ],
                           ),
                           20.height,
@@ -129,11 +130,16 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                 ),
                                 10.height,
                                 AppTextField(
-                                  hintText: LocaleKey.name.tr,
+                                  controller: nameController,
+                                  hintText: '名前',
                                   borderColor: AppColors.colorDEDEDE,
                                   textStyleColor: AppColors.black,
-                                  onChanged: (value) {},
-                                  errors: const [],
+                                  onChanged: (value) {
+                                    context
+                                        .read<FanProfileEditBloc>()
+                                        .add(OnChangeName(value));
+                                  },
+                                  errors: [state.validName],
                                 ),
                                 24.height,
                                 Text(
@@ -150,7 +156,6 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                       begin: Alignment.centerLeft, end: Alignment.centerRight),
                                   height: 50,
                                   options: const [
-                                    //TODO: handle multi language
                                     '男性',
                                     '女性',
                                     '他の'
@@ -180,8 +185,7 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                       iconType: IconType.calendar,
                                       padding: 22.paddingHorizontal.copyWith(top: 14),
                                       controller: birthDateController,
-                                      hintText: LocaleKey.hintDateOfBirth.tr,
-                                      errors: [state.validBirthDate],
+                                      hintText: '生年月日',
                                       borderColor: AppColors.colorDEDEDE,
                                     ),
                                     Positioned.fill(
@@ -207,8 +211,9 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                             )))
                                   ],
                                 ),
+                                24.height,
                                 Text(
-                                  LocaleKey.bioTitle.tr,
+                                  '紹介',
                                   style: AppStyles.fontSize14(
                                     fontWeight: FontWeight.w600,
                                     color: AppColors.black,
@@ -216,14 +221,19 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                 ),
                                 10.height,
                                 AppTextField(
-                                  hintText: LocaleKey.bioTitle.tr,
+                                  controller: welcomeMessageController,
+                                  hintText: '紹介',
                                   borderColor: AppColors.colorDEDEDE,
                                   textStyleColor: AppColors.black,
                                   textStyle:
                                       AppStyles.fontSize12(height: 20 / 12, color: AppColors.black),
                                   keyboardType: TextInputType.multiline,
                                   height: 72,
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    context
+                                        .read<FanProfileEditBloc>()
+                                        .add(OnChangeWelcomeMessage(value));
+                                  },
                                   errors: const [],
                                 ),
                                 14.height,
@@ -232,11 +242,15 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                     AppButton(
                                       onTap: () {
                                         FocusScope.of(context).unfocus();
-                                        Navigator.of(context).pop();
+                                        context
+                                            .read<FanProfileEditBloc>()
+                                            .add(OnUpdateProfile(onUpdateProfileSuccess: () {
+                                              Navigator.of(context).pop();
+                                        }));
                                       },
                                       width: (Get.width - 50 - 14) / 2,
                                       height: 55,
-                                      title: LocaleKey.register.tr,
+                                      title: '登録する',
                                     ),
                                     14.width,
                                     AppButton(
@@ -244,7 +258,7 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                                       backgroundColor: AppColors.color9B9B9B,
                                       width: (Get.width - 50 - 14) / 2,
                                       height: 55,
-                                      title: LocaleKey.cancel.tr,
+                                      title: 'キャンセル',
                                     )
                                   ],
                                 ),
@@ -255,11 +269,6 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                         ],
                       ),
                     ),
-                    if (user?.role == Role.creator && currentLoginUser?.role != Role.creator)
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: _callCreator(state),
-                      ),
                   ],
                 ),
               ),
@@ -268,8 +277,8 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
         ));
   }
 
-  Align _userAvatar(FanProfileEditState state) {
-    const imagePath = AppAssets.bg_fan_avatar_png;
+  Align _userAvatar(BuildContext context, FanProfileEditState state) {
+    final imagePath = state.avatar?.path ?? state.currentLoginUser?.getAvatarPath() ?? AppAssets.ic_avatar_default_svg;
     return Align(
       alignment: Alignment.topCenter,
       child: Column(
@@ -277,7 +286,7 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
           60.height,
           Stack(
             children: [
-              const AppImage(
+              AppImage(
                 image: imagePath,
                 width: 120,
                 height: 120,
@@ -297,7 +306,9 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
                   ),
                   child: IconButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () {},
+                    onPressed: () {
+                      _showImageResource(context);
+                    },
                     splashRadius: 24,
                     icon: SvgPicture.asset(AppAssets.ic_edit_svg),
                   ),
@@ -311,40 +322,26 @@ class _FanProfileEditPageState extends State<FanProfileEditPage> {
     );
   }
 
-  Widget _callCreator(FanProfileEditState state) {
-    final typeCall = TypeCall.getTypeCall(creatorRoomLength: state.user?.creatorRoom?.length ?? 0);
-    final isOnline = state.user?.isOnline ?? false;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppDimensions.marginLeft, 0, AppDimensions.marginLeft, 10),
-      child: AppButton(
-        onTap: isOnline
-            ? () {
-                // Get.find<Signaling>().processCall(state.user!);
+  _showImageResource(BuildContext context) {
+    Get.dialog(
+      ImageResourceDialog(
+        onConfirmPressed: (imageResource) async {
+          final permission = imageResource == ImageSource.camera ? Permission.camera : Permission.photos;
+          final type = imageResource == ImageSource.camera ? PermissionType.camera : PermissionType.photos;
+          final isGranted = (Platform.isAndroid && imageResource == ImageSource.gallery)
+              ? true
+              : await PermissionManager().checkPermission(permission, type);
+          if(isGranted) {
+            final XFile? image = await picker.pickImage(source: imageResource);
+            if(image?.path.isNotEmpty ?? false) {
+              if(context.mounted) {
+                context.read<FanProfileEditBloc>().add(OnAvatarSelected(File(image?.path ?? '')));
               }
-            : null,
-        height: 62,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0),
-            offset: const Offset(0, 0),
-            blurRadius: 0,
-          ),
-        ],
-        gradient: isOnline ? typeCall.gradientColor : AppColors.gradientOffline(),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Text(
-              isOnline ? typeCall.text : LocaleKey.callOffline.tr,
-              style: AppStyles.fontSize20(
-                fontWeight: FontWeight.w800,
-                height: 30 / 20,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+            }
+          }
+        },
       ),
+      barrierDismissible: true,
     );
   }
 }

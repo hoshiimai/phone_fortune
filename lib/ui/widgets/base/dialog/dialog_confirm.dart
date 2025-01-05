@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
-import 'package:callmobile/locale/locale_key.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
+
 import 'package:callmobile/ui/widgets/app_button.dart';
 import 'package:callmobile/utils/app_colors.dart';
 import 'package:callmobile/utils/app_dimensions.dart';
@@ -57,7 +57,7 @@ class DialogConfirm extends StatelessWidget {
             AppButton(
               width: Get.width / 3,
               onTap: onClickConfirm ?? () => Get.back(),
-              title: textConfirm ?? LocaleKey.call.tr,
+              title: textConfirm ?? '電話する',
               height: 48,
               padding: 0.paddingAll,
             ),
@@ -66,7 +66,7 @@ class DialogConfirm extends StatelessWidget {
               width: Get.width / 3,
               onTap: onClickCancel ?? () => Get.back(),
               backgroundColor: AppColors.black,
-              title: textCancel ?? LocaleKey.cancel.tr,
+              title: textCancel ?? 'キャンセル',
               height: 48,
               padding: 0.paddingAll,
             ),

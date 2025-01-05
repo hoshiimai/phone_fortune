@@ -1,13 +1,14 @@
 import 'dart:async';
 
-import 'package:callmobile/core/model/response/model/creator.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/core/model/business/creator_status.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 
+import '../../../core/managers/signaling.dart';
 import '../../../core/model/enum/enum_role.dart';
 import '../../../core/model/response/model/user.dart';
 
@@ -18,15 +19,16 @@ import '../../../utils/app_dimensions.dart';
 
 import '../../../utils/app_pages.dart';
 import '../../../utils/app_styles.dart';
+import '../../fan/home/interactor/home_bloc.dart' as home;
 import '../../widgets/app_button.dart';
 import '../../widgets/app_image.dart';
 import '../../widgets/base/app_dialog.dart';
 import 'interactor/creator_profile_bloc.dart';
 
 class CreatorProfilePage extends StatefulWidget {
-  final User? user;
-  final Creator? creator;
-  const CreatorProfilePage({super.key, required this.user, this.creator});
+  final User? creator;
+
+  const CreatorProfilePage({super.key, this.creator});
 
   @override
   State<CreatorProfilePage> createState() => _CreatorProfilePageState();
@@ -48,15 +50,19 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => Get.find<CreatorProfileBloc>()..add(Init(widget.user)),
+            create: (context) => Get.find<CreatorProfileBloc>()..add(Init(widget.creator)),
           ),
         ],
         child: BlocConsumer<CreatorProfileBloc, CreatorProfileState>(
           listener: (BuildContext context, CreatorProfileState state) {},
           builder: (BuildContext context, CreatorProfileState state) {
-            const name = 'みゆき';
-            const welcomeMessage = 'こんにちは！テキストが入りますテキストが入りますテキストが入りますテキストが入りますテキストが入りますテキストが入ります💓';
-            const coverFilePath = AppAssets.bg_cover_png;
+            if(state.creator == null) {
+              return const SizedBox.shrink();
+            }
+            final creator = state.creator!;
+            final name = creator.fullName ?? '';
+            final welcomeMessage = creator.welcomeMessages ?? '';
+            final coverFilePath = creator.getCoverPath();
             return GestureDetector(
               onTap: () {
                 setState(() => isShowMore = false);
@@ -100,12 +106,21 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
                                 Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    AppImage(
-                                      image: coverFilePath,
-                                      width: Get.width,
-                                      height: 177,
-                                      fit: BoxFit.cover,
-                                    ),
+                                    coverFilePath?.isNotEmpty ?? false
+                                        ? AppImage(
+                                            image: coverFilePath!,
+                                            width: Get.width,
+                                            height: 177,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(
+                                            width: Get.width,
+                                            height: 177,
+                                            decoration: BoxDecoration(
+                                              gradient: AppColors.gradient(
+                                                  begin: Alignment.centerLeft, end: Alignment.centerRight),
+                                            ),
+                                          ),
                                     Container(
                                       color: AppColors.white,
                                       width: Get.width,
@@ -118,8 +133,7 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
                                             Text(
                                               name,
                                               style: AppStyles.fontSize20(
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColors.black),
+                                                  fontWeight: FontWeight.w600, color: AppColors.black),
                                               textAlign: TextAlign.center,
                                             ),
                                             8.height,
@@ -129,7 +143,7 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
                                     )
                                   ],
                                 ),
-                                _userAvatar(state),
+                                _userAvatar(creator),
                               ],
                             ),
                           ),
@@ -144,8 +158,7 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
                                     alignment: Alignment.topLeft,
                                     child: Text(
                                       welcomeMessage,
-                                      style: AppStyles.fontSize12(
-                                          color: AppColors.black, height: 20 / 12),
+                                      style: AppStyles.fontSize12(color: AppColors.black, height: 20 / 12),
                                     ),
                                   ),
                                   110.height,
@@ -156,10 +169,10 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
                         ],
                       ),
                     ),
-                    if(state.currentLoginUser?.role == Role.fan)
+                    if (state.currentLoginUser?.role == Role.fan)
                       Align(
                         alignment: Alignment.bottomCenter,
-                        child: _callCreator(state),
+                        child: _callCreator(context, creator),
                       )
                   ],
                 ),
@@ -169,14 +182,13 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
         ));
   }
 
-  Align _userAvatar(CreatorProfileState state) {
-    const imagePath = AppAssets.bg_avatar_png;
+  Align _userAvatar(User creator) {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
         padding: 117.paddingTop,
-        child: const AppImage(
-          image: imagePath,
+        child: AppImage(
+          image: creator.getAvatarPath(),
           width: 120,
           height: 120,
           radius: 100,
@@ -185,11 +197,10 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
     );
   }
 
-  Widget _callCreator(CreatorProfileState state) {
+  Widget _callCreator(BuildContext context, User creator) {
     Color buttonStartColor, buttonEndColor;
-    final waitingFanCount = widget.creator?.waitingFanCount ?? -1;
-    final isAvailable = waitingFanCount == 0;
-    if (isAvailable) {
+    final isAbleToCall = !creator.isCalling && creator.status == Status.online && creator.waitingCount == 0;
+    if (isAbleToCall) {
       buttonStartColor = AppColors.color35D6C8;
       buttonEndColor = AppColors.color47C66B;
     } else {
@@ -200,10 +211,16 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
       padding: const EdgeInsets.fromLTRB(AppDimensions.marginLeft, 0, AppDimensions.marginLeft, 10),
       child: AppButton(
         onTap: () {
-          if (isAvailable) {
-            showConfirmCallDialog(context, widget.creator!);
+          if(isAbleToCall) {
+            Get.find<Signaling>().processCall(creator);
           } else {
-            showWaitingDialog(context, widget.creator!);
+            showWaitingDialog(context, creator, () {
+              Get.back();
+              context.read<CreatorProfileBloc>().add(OnRegisterCall(creatorId: creator.id, onRegisterSuccess: () {
+                context.read<CreatorProfileBloc>().add(OnGetCreatorDetail(creatorId: creator.id));
+                Get.find<home.HomeBloc>().add(const home.OnGetListIdol(isRefresh: true));
+              }));
+            });
           }
         },
         height: 62,
@@ -214,21 +231,19 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
             blurRadius: 0,
           ),
         ],
-        gradient: AppColors.gradientCenterHorizontal(
-            startColor: buttonStartColor, endColor: buttonEndColor),
+        gradient: AppColors.gradientCenterHorizontal(startColor: buttonStartColor, endColor: buttonEndColor),
         child: Stack(
           fit: StackFit.expand,
           children: [
             Text(
-              isAvailable ? '会話する' : '順番待ち',
-              style: AppStyles.fontSize20(
-                  fontWeight: FontWeight.w800, height: 30 / 20, color: AppColors.white),
+              isAbleToCall ? '会話する' : '順番待ち',
+              style: AppStyles.fontSize20(fontWeight: FontWeight.w800, height: 30 / 20, color: AppColors.white),
               textAlign: TextAlign.center,
             ),
             Align(
               alignment: Alignment.centerLeft,
               child: AppImage(
-                image: isAvailable ? AppAssets.ic_call_new_svg : AppAssets.ic_wait_png,
+                image: isAbleToCall ? AppAssets.ic_call_new_svg : AppAssets.ic_wait_png,
                 width: 24,
                 height: 24,
               ),

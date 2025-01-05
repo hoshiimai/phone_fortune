@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../locale/locale_key.dart';
+
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_dimensions.dart';
 import '../../../../utils/app_styles.dart';
@@ -43,7 +43,7 @@ class ImageResourceDialogState extends State<ImageResourceDialog> {
       title: Padding(
         padding: const EdgeInsets.only(top: 30, bottom: 10),
         child: Text(
-          LocaleKey.option.tr,
+          'オプション',
           style: AppStyles.fontSize16(
             fontFamily: AppStyles.fontHiraginoKakuProW6,
             fontWeight: FontWeight.w600,
@@ -55,11 +55,11 @@ class ImageResourceDialogState extends State<ImageResourceDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(title: Text(LocaleKey.camera.tr), onTap: () {
+          ListTile(title: const Text('カメラ',), onTap: () {
             Navigator.of(context).pop();
             widget.onConfirmPressed?.call(ImageSource.camera);
           },),
-          ListTile(title: Text(LocaleKey.gallery.tr), onTap: () {
+          ListTile(title: const Text('ギャラリー',), onTap: () {
             Navigator.of(context).pop();
             widget.onConfirmPressed?.call(ImageSource.gallery);
           },)

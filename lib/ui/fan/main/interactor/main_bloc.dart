@@ -61,27 +61,15 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   FutureOr<void> _onGetUserDetail(
       OnGetUserDetail event, Emitter<MainState> emit) async {
     final appShared = Get.find<AppShared>();
-    // final response =
-    //     await authRepository.getProfile();
-    // response.fold((error) {}, (user) {
-    //   appShared.setUser(user);
-    //   emit(state.copyWith(
-    //     user: user,
-    //   ));
-    //   event.onGetUserSuccess?.call(user);
-    // });
-    //
-    // await Get.find<FirebaseMessagingManager>().fetchAndSaveFcmToken();
-    // final fcmToken = appShared.getTokenFcm();
-    // if(fcmToken?.isNotEmpty ?? false) {
-    //   authRepository.updateFcmToken(fcmToken: fcmToken!);
-    // }
-    //
-    // final responseNotification =
-    //     await notificationRepository.getNotificationUnread();
-    // responseNotification.fold((error) {}, (notification) {
-    //   appShared.setNotificationUnread(notification.isNotifyUnread);
-    // });
+    final response =
+        await authRepository.getProfile();
+    response.fold((error) {}, (user) {
+      appShared.setUser(user);
+      emit(state.copyWith(
+        user: user,
+      ));
+      event.onGetUserSuccess?.call(user);
+    });
   }
 
   FutureOr<void> _onUpdateCreator(OnUpdateCreator event, Emitter<MainState> emit) async {

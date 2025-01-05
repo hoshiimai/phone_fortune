@@ -23,6 +23,7 @@ mixin _$MainCreatorState {
   CreatorUpdate? get creatorUpdate => throw _privateConstructorUsedError;
   BottomNavigationPage? get popPage => throw _privateConstructorUsedError;
   PageNavigation? get pageNavigation => throw _privateConstructorUsedError;
+  int? get waitingCount => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MainCreatorStateCopyWith<MainCreatorState> get copyWith =>
@@ -42,7 +43,8 @@ abstract class $MainCreatorStateCopyWith<$Res> {
       User? user,
       CreatorUpdate? creatorUpdate,
       BottomNavigationPage? popPage,
-      PageNavigation? pageNavigation});
+      PageNavigation? pageNavigation,
+      int? waitingCount});
 
   $UserCopyWith<$Res>? get user;
 }
@@ -67,6 +69,7 @@ class _$MainCreatorStateCopyWithImpl<$Res, $Val extends MainCreatorState>
     Object? creatorUpdate = freezed,
     Object? popPage = freezed,
     Object? pageNavigation = freezed,
+    Object? waitingCount = freezed,
   }) {
     return _then(_value.copyWith(
       status: null == status
@@ -97,6 +100,10 @@ class _$MainCreatorStateCopyWithImpl<$Res, $Val extends MainCreatorState>
           ? _value.pageNavigation
           : pageNavigation // ignore: cast_nullable_to_non_nullable
               as PageNavigation?,
+      waitingCount: freezed == waitingCount
+          ? _value.waitingCount
+          : waitingCount // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 
@@ -128,7 +135,8 @@ abstract class _$$MainCreatorStateImplCopyWith<$Res>
       User? user,
       CreatorUpdate? creatorUpdate,
       BottomNavigationPage? popPage,
-      PageNavigation? pageNavigation});
+      PageNavigation? pageNavigation,
+      int? waitingCount});
 
   @override
   $UserCopyWith<$Res>? get user;
@@ -152,6 +160,7 @@ class __$$MainCreatorStateImplCopyWithImpl<$Res>
     Object? creatorUpdate = freezed,
     Object? popPage = freezed,
     Object? pageNavigation = freezed,
+    Object? waitingCount = freezed,
   }) {
     return _then(_$MainCreatorStateImpl(
       status: null == status
@@ -182,6 +191,10 @@ class __$$MainCreatorStateImplCopyWithImpl<$Res>
           ? _value.pageNavigation
           : pageNavigation // ignore: cast_nullable_to_non_nullable
               as PageNavigation?,
+      waitingCount: freezed == waitingCount
+          ? _value.waitingCount
+          : waitingCount // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -196,7 +209,8 @@ class _$MainCreatorStateImpl implements _MainCreatorState {
       this.user,
       this.creatorUpdate,
       this.popPage,
-      this.pageNavigation});
+      this.pageNavigation,
+      this.waitingCount});
 
   @override
   @JsonKey()
@@ -214,10 +228,12 @@ class _$MainCreatorStateImpl implements _MainCreatorState {
   final BottomNavigationPage? popPage;
   @override
   final PageNavigation? pageNavigation;
+  @override
+  final int? waitingCount;
 
   @override
   String toString() {
-    return 'MainCreatorState(status: $status, error: $error, currentPage: $currentPage, user: $user, creatorUpdate: $creatorUpdate, popPage: $popPage, pageNavigation: $pageNavigation)';
+    return 'MainCreatorState(status: $status, error: $error, currentPage: $currentPage, user: $user, creatorUpdate: $creatorUpdate, popPage: $popPage, pageNavigation: $pageNavigation, waitingCount: $waitingCount)';
   }
 
   @override
@@ -234,12 +250,14 @@ class _$MainCreatorStateImpl implements _MainCreatorState {
                 other.creatorUpdate == creatorUpdate) &&
             (identical(other.popPage, popPage) || other.popPage == popPage) &&
             (identical(other.pageNavigation, pageNavigation) ||
-                other.pageNavigation == pageNavigation));
+                other.pageNavigation == pageNavigation) &&
+            (identical(other.waitingCount, waitingCount) ||
+                other.waitingCount == waitingCount));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, status, error, currentPage, user,
-      creatorUpdate, popPage, pageNavigation);
+      creatorUpdate, popPage, pageNavigation, waitingCount);
 
   @JsonKey(ignore: true)
   @override
@@ -257,7 +275,8 @@ abstract class _MainCreatorState implements MainCreatorState {
       final User? user,
       final CreatorUpdate? creatorUpdate,
       final BottomNavigationPage? popPage,
-      final PageNavigation? pageNavigation}) = _$MainCreatorStateImpl;
+      final PageNavigation? pageNavigation,
+      final int? waitingCount}) = _$MainCreatorStateImpl;
 
   @override
   PageState get status;
@@ -273,6 +292,8 @@ abstract class _MainCreatorState implements MainCreatorState {
   BottomNavigationPage? get popPage;
   @override
   PageNavigation? get pageNavigation;
+  @override
+  int? get waitingCount;
   @override
   @JsonKey(ignore: true)
   _$$MainCreatorStateImplCopyWith<_$MainCreatorStateImpl> get copyWith =>

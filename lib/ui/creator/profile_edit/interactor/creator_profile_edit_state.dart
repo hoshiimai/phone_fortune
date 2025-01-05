@@ -2,34 +2,38 @@ part of 'creator_profile_edit_bloc.dart';
 
 class CreatorProfileEditState extends Equatable {
   final PageState status;
-  final User? user;
-  final String? nickName;
-  final String? welcomeMessages;
+  final User? currentLoginUser;
+  final String? name;
+  final String validName;
+  final String? welcomeMessage;
   final File? avatar;
   final File? cover;
 
   const CreatorProfileEditState({
     required this.status,
-    this.user,
-    this.welcomeMessages,
-    this.nickName,
+    this.currentLoginUser,
+    this.welcomeMessage,
+    this.name,
     this.avatar,
     this.cover,
+    this.validName = '',
   });
 
   CreatorProfileEditState copyWith({
     PageState? status,
-    User? user,
-    String? nickName,
-    String? welcomeMessages,
+    User? currentLoginUser,
+    String? name,
+    String? validName,
+    String? welcomeMessage,
     File? avatar,
     File? cover,
   }) {
     return CreatorProfileEditState(
       status: status ?? this.status,
-      user: user ?? this.user,
-      nickName: nickName ?? this.nickName,
-      welcomeMessages: welcomeMessages ?? this.welcomeMessages,
+      currentLoginUser: currentLoginUser ?? this.currentLoginUser,
+      name: name ?? this.name,
+      validName: validName ?? this.validName,
+      welcomeMessage: welcomeMessage ?? this.welcomeMessage,
       avatar: avatar ?? this.avatar,
       cover: cover ?? this.cover,
     );
@@ -38,9 +42,10 @@ class CreatorProfileEditState extends Equatable {
   @override
   List<Object?> get props => [
     status,
-    user,
-    nickName,
-    welcomeMessages,
+    currentLoginUser,
+    name,
+    validName,
+    welcomeMessage,
     avatar,
     cover,
   ];

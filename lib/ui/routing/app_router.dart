@@ -23,17 +23,13 @@ class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case AppPages.fanProfile:
-        final info = (routeSettings.arguments as Map<String, dynamic>?)?['info'];
-
         FanProfileBinding().dependencies();
         return CupertinoPageRoute(
-            builder: (_) => FanProfilePage(user: info), settings: routeSettings);
+            builder: (_) => const FanProfilePage(), settings: routeSettings);
       case AppPages.fanProfileEdit:
-        final info = (routeSettings.arguments as Map<String, dynamic>?)?['info'];
-
         FanProfileEditBinding().dependencies();
         return CupertinoPageRoute(
-            builder: (_) => FanProfileEditPage(user: info), settings: routeSettings);
+            builder: (_) => FanProfileEditPage(), settings: routeSettings);
       case AppPages.historyChat:
         HistoryChatBinding().dependencies();
         return CupertinoPageRoute(
@@ -52,7 +48,7 @@ class AppRouter {
         final info = (routeSettings.arguments as Map<String, dynamic>?)?['info'];
         CreatorProfileBinding().dependencies();
         return CupertinoPageRoute(
-            builder: (_) => CreatorProfilePage(user: info), settings: routeSettings);
+            builder: (_) => CreatorProfilePage(creator: info), settings: routeSettings);
       case AppPages.creatorProfileEdit:
         CreatorProfileEditBinding().dependencies();
         return CupertinoPageRoute(

@@ -87,7 +87,7 @@ dependencies:
   retrofit: ^4.2.0
   http_parser: ^4.0.2
   url_launcher: ^6.3.0
-  socket_io_client: ^2.0.3+1
+  socket_io_client: ^3.0.2
 
   dartz: ^0.10.1
   json_annotation: ^4.8.1
@@ -160,8 +160,8 @@ flutter:
   assets:
     - images/icon/
     - images/bg/
-#    - assets/sounds/sound_caller.wav
-#    - assets/sounds/sound_receive.wav
+    - assets/sounds/sound_caller.wav
+    - assets/sounds/sound_receive.wav
 
 #  fonts:
 #    - family: HiraginoKakuProW3

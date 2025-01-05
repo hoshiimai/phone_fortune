@@ -1,7 +1,7 @@
 
 import 'package:get/get.dart';
 
-import '../../../locale/locale_key.dart';
+
 
 class ErrorFromServer implements Exception {
   static const unknownErrorCode = 0;
@@ -33,14 +33,14 @@ class ErrorFromServer implements Exception {
   }
 
   factory ErrorFromServer.unknownError({String? customMessage}) {
-    return ErrorFromServer(status: false, errorCode: unknownErrorCode, message: customMessage ?? LocaleKey.unknownError.tr);
+    return ErrorFromServer(status: false, errorCode: unknownErrorCode, message: customMessage ?? 'サーバー エラーが発生しました。');
   }
 
   factory ErrorFromServer.unAuthorize() {
-    return ErrorFromServer(status: false, errorCode: unAuthorizeCode, message: LocaleKey.unAuthorized.tr);
+    return ErrorFromServer(status: false, errorCode: unAuthorizeCode, message: 'セッションが無効化されました。もう一度ログインしてください！');
   }
   factory ErrorFromServer.noInternetConnection() {
     return ErrorFromServer(
-        status: false, errorCode: noInternetConnectionCode, message: LocaleKey.noInternetConnection.tr);
+        status: false, errorCode: noInternetConnectionCode, message: 'インターネット接続されていません。ネットワークの接続を確認し、もう一度試してください！');
   }
 }

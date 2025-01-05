@@ -33,8 +33,8 @@ mixin _$User {
   Role? get role => throw _privateConstructorUsedError;
   @JsonKey(name: 'nickname')
   String? get nickname => throw _privateConstructorUsedError;
-  @JsonKey(name: 'name')
-  String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'fullname')
+  String? get fullName => throw _privateConstructorUsedError;
   @JsonKey(name: 'name_kata')
   String? get nameKata => throw _privateConstructorUsedError;
   @JsonKey(name: 'birthdate')
@@ -43,16 +43,6 @@ mixin _$User {
   String? get tel => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_online', defaultValue: false)
   bool get isOnline => throw _privateConstructorUsedError;
-  @JsonKey(name: 'stripe_token')
-  String? get stripeToken => throw _privateConstructorUsedError;
-  @JsonKey(name: 'initial_call_timing')
-  int? get initialCallTiming => throw _privateConstructorUsedError;
-  @JsonKey(name: 'initial_call_fee')
-  int? get initialCallFee => throw _privateConstructorUsedError;
-  @JsonKey(name: 'after_call_timing')
-  int? get afterCallTiming => throw _privateConstructorUsedError;
-  @JsonKey(name: 'after_call_fee')
-  int? get afterCallFee => throw _privateConstructorUsedError;
   @JsonKey(name: 'welcome_messages')
   String? get welcomeMessages => throw _privateConstructorUsedError;
   @JsonKey(name: 'evaluate_score')
@@ -63,57 +53,31 @@ mixin _$User {
   int? get gender => throw _privateConstructorUsedError;
   @JsonKey(name: 'point_balance')
   int? get pointBalance => throw _privateConstructorUsedError;
-  @JsonKey(name: 'withdraw_pending')
-  int? get withdrawPending => throw _privateConstructorUsedError;
-  @JsonKey(name: 'x_account_url')
-  String? get xAccountUrl => throw _privateConstructorUsedError;
-  @JsonKey(name: 'fb_account_url')
-  String? get fbAccountUrl => throw _privateConstructorUsedError;
-  @JsonKey(name: 'instagram_account_url')
-  String? get instagramAccountUrl => throw _privateConstructorUsedError;
-  @JsonKey(name: 'tiktok_account_url')
-  String? get tiktokAccountUrl => throw _privateConstructorUsedError;
-  @JsonKey(name: 'agent_10_code')
-  String? get agent10Code => throw _privateConstructorUsedError;
-  @JsonKey(name: 'agent_15_code')
-  String? get agent15Code => throw _privateConstructorUsedError;
-  @JsonKey(name: 'agent_20_code')
-  String? get agent20Code => throw _privateConstructorUsedError;
   @JsonKey(name: 'avatar_img_id')
   int? get avatarImgId => throw _privateConstructorUsedError;
   @JsonKey(name: 'cover_img_id')
   int? get coverImgId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'is_email_verified')
-  bool? get isEmailVerified => throw _privateConstructorUsedError;
-  @JsonKey(name: 'status')
-  int? get status => throw _privateConstructorUsedError;
-  @JsonKey(name: 'is_deleted')
-  bool? get isDeleted => throw _privateConstructorUsedError;
-  @JsonKey(name: 'like_count')
-  int? get likeCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'average_rating')
   double? get averageRating => throw _privateConstructorUsedError;
-  @JsonKey(name: 'call_fee_per_timing')
-  double? get callFeePerTiming => throw _privateConstructorUsedError;
-  @JsonKey(name: 'liked_creator')
-  List<LikedCreator>? get likedCreator => throw _privateConstructorUsedError;
   @JsonKey(name: 'creator_room')
   List<dynamic>? get creatorRoom => throw _privateConstructorUsedError;
-  @JsonKey(name: 'point_form_user', defaultValue: [])
-  List<PointFormUser>? get pointsFormUser => throw _privateConstructorUsedError;
   @JsonKey(name: 'rank')
   int? get rank => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_point', defaultValue: 0)
   int? get totalPoint => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_rating', defaultValue: 0)
   int? get totalRating => throw _privateConstructorUsedError;
+  @JsonKey(name: 'status', includeFromJson: true)
+  @StatusConverter()
+  Status? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'waiting_count', defaultValue: 0)
+  int? get waitingCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'time_waiting', defaultValue: 0)
+  int? get timeWaiting => throw _privateConstructorUsedError;
   @JsonKey(name: 'url')
   String? get refUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'lang')
   String? get lang => throw _privateConstructorUsedError;
-  @JsonKey(readValue: _creatorReader)
-  List<AgentOfCreator>? get agentOfCreator =>
-      throw _privateConstructorUsedError;
   @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
   @AvatarConverter()
   Avatar? get avatar => throw _privateConstructorUsedError;
@@ -124,6 +88,13 @@ mixin _$User {
   @CoverConverter()
   NotifySetting? get notifySetting => throw _privateConstructorUsedError;
   bool get isManagedByThisAgent => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true)
+  List<HistoryCall>? get historyCall => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true)
+  @IsCallingConverter()
+  bool get isCalling => throw _privateConstructorUsedError;
+  @JsonKey(name: 'total_time', defaultValue: 0)
+  int? get totalCallTime => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -142,47 +113,30 @@ abstract class $UserCopyWith<$Res> {
       @JsonKey(name: 'authen_code') String? authenCode,
       @JsonKey(name: 'role', includeFromJson: true) @RoleConverter() Role? role,
       @JsonKey(name: 'nickname') String? nickname,
-      @JsonKey(name: 'name') String? name,
+      @JsonKey(name: 'fullname') String? fullName,
       @JsonKey(name: 'name_kata') String? nameKata,
       @JsonKey(name: 'birthdate') String? birthdate,
       @JsonKey(name: 'tel') String? tel,
       @JsonKey(name: 'is_online', defaultValue: false) bool isOnline,
-      @JsonKey(name: 'stripe_token') String? stripeToken,
-      @JsonKey(name: 'initial_call_timing') int? initialCallTiming,
-      @JsonKey(name: 'initial_call_fee') int? initialCallFee,
-      @JsonKey(name: 'after_call_timing') int? afterCallTiming,
-      @JsonKey(name: 'after_call_fee') int? afterCallFee,
       @JsonKey(name: 'welcome_messages') String? welcomeMessages,
       @JsonKey(name: 'evaluate_score') double? evaluateScore,
       @JsonKey(name: 'total_evaluated') int? totalEvaluated,
       @JsonKey(name: 'gender') int? gender,
       @JsonKey(name: 'point_balance') int? pointBalance,
-      @JsonKey(name: 'withdraw_pending') int? withdrawPending,
-      @JsonKey(name: 'x_account_url') String? xAccountUrl,
-      @JsonKey(name: 'fb_account_url') String? fbAccountUrl,
-      @JsonKey(name: 'instagram_account_url') String? instagramAccountUrl,
-      @JsonKey(name: 'tiktok_account_url') String? tiktokAccountUrl,
-      @JsonKey(name: 'agent_10_code') String? agent10Code,
-      @JsonKey(name: 'agent_15_code') String? agent15Code,
-      @JsonKey(name: 'agent_20_code') String? agent20Code,
       @JsonKey(name: 'avatar_img_id') int? avatarImgId,
       @JsonKey(name: 'cover_img_id') int? coverImgId,
-      @JsonKey(name: 'is_email_verified') bool? isEmailVerified,
-      @JsonKey(name: 'status') int? status,
-      @JsonKey(name: 'is_deleted') bool? isDeleted,
-      @JsonKey(name: 'like_count') int? likeCount,
       @JsonKey(name: 'average_rating') double? averageRating,
-      @JsonKey(name: 'call_fee_per_timing') double? callFeePerTiming,
-      @JsonKey(name: 'liked_creator') List<LikedCreator>? likedCreator,
       @JsonKey(name: 'creator_room') List<dynamic>? creatorRoom,
-      @JsonKey(name: 'point_form_user', defaultValue: [])
-      List<PointFormUser>? pointsFormUser,
       @JsonKey(name: 'rank') int? rank,
       @JsonKey(name: 'total_point', defaultValue: 0) int? totalPoint,
       @JsonKey(name: 'total_rating', defaultValue: 0) int? totalRating,
+      @JsonKey(name: 'status', includeFromJson: true)
+      @StatusConverter()
+      Status? status,
+      @JsonKey(name: 'waiting_count', defaultValue: 0) int? waitingCount,
+      @JsonKey(name: 'time_waiting', defaultValue: 0) int? timeWaiting,
       @JsonKey(name: 'url') String? refUrl,
       @JsonKey(name: 'lang') String? lang,
-      @JsonKey(readValue: _creatorReader) List<AgentOfCreator>? agentOfCreator,
       @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
       @AvatarConverter()
       Avatar? avatar,
@@ -193,7 +147,13 @@ abstract class $UserCopyWith<$Res> {
           name: 'notify_setting', includeFromJson: true, includeIfNull: false)
       @CoverConverter()
       NotifySetting? notifySetting,
-      bool isManagedByThisAgent});
+      bool isManagedByThisAgent,
+      @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true)
+      List<HistoryCall>? historyCall,
+      @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true)
+      @IsCallingConverter()
+      bool isCalling,
+      @JsonKey(name: 'total_time', defaultValue: 0) int? totalCallTime});
 
   $AvatarCopyWith<$Res>? get avatar;
   $CoverCopyWith<$Res>? get cover;
@@ -219,50 +179,35 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? authenCode = freezed,
     Object? role = freezed,
     Object? nickname = freezed,
-    Object? name = freezed,
+    Object? fullName = freezed,
     Object? nameKata = freezed,
     Object? birthdate = freezed,
     Object? tel = freezed,
     Object? isOnline = null,
-    Object? stripeToken = freezed,
-    Object? initialCallTiming = freezed,
-    Object? initialCallFee = freezed,
-    Object? afterCallTiming = freezed,
-    Object? afterCallFee = freezed,
     Object? welcomeMessages = freezed,
     Object? evaluateScore = freezed,
     Object? totalEvaluated = freezed,
     Object? gender = freezed,
     Object? pointBalance = freezed,
-    Object? withdrawPending = freezed,
-    Object? xAccountUrl = freezed,
-    Object? fbAccountUrl = freezed,
-    Object? instagramAccountUrl = freezed,
-    Object? tiktokAccountUrl = freezed,
-    Object? agent10Code = freezed,
-    Object? agent15Code = freezed,
-    Object? agent20Code = freezed,
     Object? avatarImgId = freezed,
     Object? coverImgId = freezed,
-    Object? isEmailVerified = freezed,
-    Object? status = freezed,
-    Object? isDeleted = freezed,
-    Object? likeCount = freezed,
     Object? averageRating = freezed,
-    Object? callFeePerTiming = freezed,
-    Object? likedCreator = freezed,
     Object? creatorRoom = freezed,
-    Object? pointsFormUser = freezed,
     Object? rank = freezed,
     Object? totalPoint = freezed,
     Object? totalRating = freezed,
+    Object? status = freezed,
+    Object? waitingCount = freezed,
+    Object? timeWaiting = freezed,
     Object? refUrl = freezed,
     Object? lang = freezed,
-    Object? agentOfCreator = freezed,
     Object? avatar = freezed,
     Object? cover = freezed,
     Object? notifySetting = freezed,
     Object? isManagedByThisAgent = null,
+    Object? historyCall = freezed,
+    Object? isCalling = null,
+    Object? totalCallTime = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -289,9 +234,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.nickname
           : nickname // ignore: cast_nullable_to_non_nullable
               as String?,
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      fullName: freezed == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
               as String?,
       nameKata: freezed == nameKata
           ? _value.nameKata
@@ -309,26 +254,6 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
-      stripeToken: freezed == stripeToken
-          ? _value.stripeToken
-          : stripeToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      initialCallTiming: freezed == initialCallTiming
-          ? _value.initialCallTiming
-          : initialCallTiming // ignore: cast_nullable_to_non_nullable
-              as int?,
-      initialCallFee: freezed == initialCallFee
-          ? _value.initialCallFee
-          : initialCallFee // ignore: cast_nullable_to_non_nullable
-              as int?,
-      afterCallTiming: freezed == afterCallTiming
-          ? _value.afterCallTiming
-          : afterCallTiming // ignore: cast_nullable_to_non_nullable
-              as int?,
-      afterCallFee: freezed == afterCallFee
-          ? _value.afterCallFee
-          : afterCallFee // ignore: cast_nullable_to_non_nullable
-              as int?,
       welcomeMessages: freezed == welcomeMessages
           ? _value.welcomeMessages
           : welcomeMessages // ignore: cast_nullable_to_non_nullable
@@ -349,38 +274,6 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.pointBalance
           : pointBalance // ignore: cast_nullable_to_non_nullable
               as int?,
-      withdrawPending: freezed == withdrawPending
-          ? _value.withdrawPending
-          : withdrawPending // ignore: cast_nullable_to_non_nullable
-              as int?,
-      xAccountUrl: freezed == xAccountUrl
-          ? _value.xAccountUrl
-          : xAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fbAccountUrl: freezed == fbAccountUrl
-          ? _value.fbAccountUrl
-          : fbAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      instagramAccountUrl: freezed == instagramAccountUrl
-          ? _value.instagramAccountUrl
-          : instagramAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tiktokAccountUrl: freezed == tiktokAccountUrl
-          ? _value.tiktokAccountUrl
-          : tiktokAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agent10Code: freezed == agent10Code
-          ? _value.agent10Code
-          : agent10Code // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agent15Code: freezed == agent15Code
-          ? _value.agent15Code
-          : agent15Code // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agent20Code: freezed == agent20Code
-          ? _value.agent20Code
-          : agent20Code // ignore: cast_nullable_to_non_nullable
-              as String?,
       avatarImgId: freezed == avatarImgId
           ? _value.avatarImgId
           : avatarImgId // ignore: cast_nullable_to_non_nullable
@@ -389,42 +282,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.coverImgId
           : coverImgId // ignore: cast_nullable_to_non_nullable
               as int?,
-      isEmailVerified: freezed == isEmailVerified
-          ? _value.isEmailVerified
-          : isEmailVerified // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
-      isDeleted: freezed == isDeleted
-          ? _value.isDeleted
-          : isDeleted // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      likeCount: freezed == likeCount
-          ? _value.likeCount
-          : likeCount // ignore: cast_nullable_to_non_nullable
-              as int?,
       averageRating: freezed == averageRating
           ? _value.averageRating
           : averageRating // ignore: cast_nullable_to_non_nullable
               as double?,
-      callFeePerTiming: freezed == callFeePerTiming
-          ? _value.callFeePerTiming
-          : callFeePerTiming // ignore: cast_nullable_to_non_nullable
-              as double?,
-      likedCreator: freezed == likedCreator
-          ? _value.likedCreator
-          : likedCreator // ignore: cast_nullable_to_non_nullable
-              as List<LikedCreator>?,
       creatorRoom: freezed == creatorRoom
           ? _value.creatorRoom
           : creatorRoom // ignore: cast_nullable_to_non_nullable
               as List<dynamic>?,
-      pointsFormUser: freezed == pointsFormUser
-          ? _value.pointsFormUser
-          : pointsFormUser // ignore: cast_nullable_to_non_nullable
-              as List<PointFormUser>?,
       rank: freezed == rank
           ? _value.rank
           : rank // ignore: cast_nullable_to_non_nullable
@@ -437,6 +302,18 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.totalRating
           : totalRating // ignore: cast_nullable_to_non_nullable
               as int?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as Status?,
+      waitingCount: freezed == waitingCount
+          ? _value.waitingCount
+          : waitingCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      timeWaiting: freezed == timeWaiting
+          ? _value.timeWaiting
+          : timeWaiting // ignore: cast_nullable_to_non_nullable
+              as int?,
       refUrl: freezed == refUrl
           ? _value.refUrl
           : refUrl // ignore: cast_nullable_to_non_nullable
@@ -445,10 +322,6 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.lang
           : lang // ignore: cast_nullable_to_non_nullable
               as String?,
-      agentOfCreator: freezed == agentOfCreator
-          ? _value.agentOfCreator
-          : agentOfCreator // ignore: cast_nullable_to_non_nullable
-              as List<AgentOfCreator>?,
       avatar: freezed == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -465,6 +338,18 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.isManagedByThisAgent
           : isManagedByThisAgent // ignore: cast_nullable_to_non_nullable
               as bool,
+      historyCall: freezed == historyCall
+          ? _value.historyCall
+          : historyCall // ignore: cast_nullable_to_non_nullable
+              as List<HistoryCall>?,
+      isCalling: null == isCalling
+          ? _value.isCalling
+          : isCalling // ignore: cast_nullable_to_non_nullable
+              as bool,
+      totalCallTime: freezed == totalCallTime
+          ? _value.totalCallTime
+          : totalCallTime // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 
@@ -519,47 +404,30 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       @JsonKey(name: 'authen_code') String? authenCode,
       @JsonKey(name: 'role', includeFromJson: true) @RoleConverter() Role? role,
       @JsonKey(name: 'nickname') String? nickname,
-      @JsonKey(name: 'name') String? name,
+      @JsonKey(name: 'fullname') String? fullName,
       @JsonKey(name: 'name_kata') String? nameKata,
       @JsonKey(name: 'birthdate') String? birthdate,
       @JsonKey(name: 'tel') String? tel,
       @JsonKey(name: 'is_online', defaultValue: false) bool isOnline,
-      @JsonKey(name: 'stripe_token') String? stripeToken,
-      @JsonKey(name: 'initial_call_timing') int? initialCallTiming,
-      @JsonKey(name: 'initial_call_fee') int? initialCallFee,
-      @JsonKey(name: 'after_call_timing') int? afterCallTiming,
-      @JsonKey(name: 'after_call_fee') int? afterCallFee,
       @JsonKey(name: 'welcome_messages') String? welcomeMessages,
       @JsonKey(name: 'evaluate_score') double? evaluateScore,
       @JsonKey(name: 'total_evaluated') int? totalEvaluated,
       @JsonKey(name: 'gender') int? gender,
       @JsonKey(name: 'point_balance') int? pointBalance,
-      @JsonKey(name: 'withdraw_pending') int? withdrawPending,
-      @JsonKey(name: 'x_account_url') String? xAccountUrl,
-      @JsonKey(name: 'fb_account_url') String? fbAccountUrl,
-      @JsonKey(name: 'instagram_account_url') String? instagramAccountUrl,
-      @JsonKey(name: 'tiktok_account_url') String? tiktokAccountUrl,
-      @JsonKey(name: 'agent_10_code') String? agent10Code,
-      @JsonKey(name: 'agent_15_code') String? agent15Code,
-      @JsonKey(name: 'agent_20_code') String? agent20Code,
       @JsonKey(name: 'avatar_img_id') int? avatarImgId,
       @JsonKey(name: 'cover_img_id') int? coverImgId,
-      @JsonKey(name: 'is_email_verified') bool? isEmailVerified,
-      @JsonKey(name: 'status') int? status,
-      @JsonKey(name: 'is_deleted') bool? isDeleted,
-      @JsonKey(name: 'like_count') int? likeCount,
       @JsonKey(name: 'average_rating') double? averageRating,
-      @JsonKey(name: 'call_fee_per_timing') double? callFeePerTiming,
-      @JsonKey(name: 'liked_creator') List<LikedCreator>? likedCreator,
       @JsonKey(name: 'creator_room') List<dynamic>? creatorRoom,
-      @JsonKey(name: 'point_form_user', defaultValue: [])
-      List<PointFormUser>? pointsFormUser,
       @JsonKey(name: 'rank') int? rank,
       @JsonKey(name: 'total_point', defaultValue: 0) int? totalPoint,
       @JsonKey(name: 'total_rating', defaultValue: 0) int? totalRating,
+      @JsonKey(name: 'status', includeFromJson: true)
+      @StatusConverter()
+      Status? status,
+      @JsonKey(name: 'waiting_count', defaultValue: 0) int? waitingCount,
+      @JsonKey(name: 'time_waiting', defaultValue: 0) int? timeWaiting,
       @JsonKey(name: 'url') String? refUrl,
       @JsonKey(name: 'lang') String? lang,
-      @JsonKey(readValue: _creatorReader) List<AgentOfCreator>? agentOfCreator,
       @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
       @AvatarConverter()
       Avatar? avatar,
@@ -570,7 +438,13 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
           name: 'notify_setting', includeFromJson: true, includeIfNull: false)
       @CoverConverter()
       NotifySetting? notifySetting,
-      bool isManagedByThisAgent});
+      bool isManagedByThisAgent,
+      @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true)
+      List<HistoryCall>? historyCall,
+      @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true)
+      @IsCallingConverter()
+      bool isCalling,
+      @JsonKey(name: 'total_time', defaultValue: 0) int? totalCallTime});
 
   @override
   $AvatarCopyWith<$Res>? get avatar;
@@ -596,50 +470,35 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? authenCode = freezed,
     Object? role = freezed,
     Object? nickname = freezed,
-    Object? name = freezed,
+    Object? fullName = freezed,
     Object? nameKata = freezed,
     Object? birthdate = freezed,
     Object? tel = freezed,
     Object? isOnline = null,
-    Object? stripeToken = freezed,
-    Object? initialCallTiming = freezed,
-    Object? initialCallFee = freezed,
-    Object? afterCallTiming = freezed,
-    Object? afterCallFee = freezed,
     Object? welcomeMessages = freezed,
     Object? evaluateScore = freezed,
     Object? totalEvaluated = freezed,
     Object? gender = freezed,
     Object? pointBalance = freezed,
-    Object? withdrawPending = freezed,
-    Object? xAccountUrl = freezed,
-    Object? fbAccountUrl = freezed,
-    Object? instagramAccountUrl = freezed,
-    Object? tiktokAccountUrl = freezed,
-    Object? agent10Code = freezed,
-    Object? agent15Code = freezed,
-    Object? agent20Code = freezed,
     Object? avatarImgId = freezed,
     Object? coverImgId = freezed,
-    Object? isEmailVerified = freezed,
-    Object? status = freezed,
-    Object? isDeleted = freezed,
-    Object? likeCount = freezed,
     Object? averageRating = freezed,
-    Object? callFeePerTiming = freezed,
-    Object? likedCreator = freezed,
     Object? creatorRoom = freezed,
-    Object? pointsFormUser = freezed,
     Object? rank = freezed,
     Object? totalPoint = freezed,
     Object? totalRating = freezed,
+    Object? status = freezed,
+    Object? waitingCount = freezed,
+    Object? timeWaiting = freezed,
     Object? refUrl = freezed,
     Object? lang = freezed,
-    Object? agentOfCreator = freezed,
     Object? avatar = freezed,
     Object? cover = freezed,
     Object? notifySetting = freezed,
     Object? isManagedByThisAgent = null,
+    Object? historyCall = freezed,
+    Object? isCalling = null,
+    Object? totalCallTime = freezed,
   }) {
     return _then(_$UserImpl(
       id: null == id
@@ -666,9 +525,9 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.nickname
           : nickname // ignore: cast_nullable_to_non_nullable
               as String?,
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      fullName: freezed == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
               as String?,
       nameKata: freezed == nameKata
           ? _value.nameKata
@@ -686,26 +545,6 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
-      stripeToken: freezed == stripeToken
-          ? _value.stripeToken
-          : stripeToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      initialCallTiming: freezed == initialCallTiming
-          ? _value.initialCallTiming
-          : initialCallTiming // ignore: cast_nullable_to_non_nullable
-              as int?,
-      initialCallFee: freezed == initialCallFee
-          ? _value.initialCallFee
-          : initialCallFee // ignore: cast_nullable_to_non_nullable
-              as int?,
-      afterCallTiming: freezed == afterCallTiming
-          ? _value.afterCallTiming
-          : afterCallTiming // ignore: cast_nullable_to_non_nullable
-              as int?,
-      afterCallFee: freezed == afterCallFee
-          ? _value.afterCallFee
-          : afterCallFee // ignore: cast_nullable_to_non_nullable
-              as int?,
       welcomeMessages: freezed == welcomeMessages
           ? _value.welcomeMessages
           : welcomeMessages // ignore: cast_nullable_to_non_nullable
@@ -726,38 +565,6 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.pointBalance
           : pointBalance // ignore: cast_nullable_to_non_nullable
               as int?,
-      withdrawPending: freezed == withdrawPending
-          ? _value.withdrawPending
-          : withdrawPending // ignore: cast_nullable_to_non_nullable
-              as int?,
-      xAccountUrl: freezed == xAccountUrl
-          ? _value.xAccountUrl
-          : xAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fbAccountUrl: freezed == fbAccountUrl
-          ? _value.fbAccountUrl
-          : fbAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      instagramAccountUrl: freezed == instagramAccountUrl
-          ? _value.instagramAccountUrl
-          : instagramAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tiktokAccountUrl: freezed == tiktokAccountUrl
-          ? _value.tiktokAccountUrl
-          : tiktokAccountUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agent10Code: freezed == agent10Code
-          ? _value.agent10Code
-          : agent10Code // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agent15Code: freezed == agent15Code
-          ? _value.agent15Code
-          : agent15Code // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agent20Code: freezed == agent20Code
-          ? _value.agent20Code
-          : agent20Code // ignore: cast_nullable_to_non_nullable
-              as String?,
       avatarImgId: freezed == avatarImgId
           ? _value.avatarImgId
           : avatarImgId // ignore: cast_nullable_to_non_nullable
@@ -766,42 +573,14 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.coverImgId
           : coverImgId // ignore: cast_nullable_to_non_nullable
               as int?,
-      isEmailVerified: freezed == isEmailVerified
-          ? _value.isEmailVerified
-          : isEmailVerified // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
-      isDeleted: freezed == isDeleted
-          ? _value.isDeleted
-          : isDeleted // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      likeCount: freezed == likeCount
-          ? _value.likeCount
-          : likeCount // ignore: cast_nullable_to_non_nullable
-              as int?,
       averageRating: freezed == averageRating
           ? _value.averageRating
           : averageRating // ignore: cast_nullable_to_non_nullable
               as double?,
-      callFeePerTiming: freezed == callFeePerTiming
-          ? _value.callFeePerTiming
-          : callFeePerTiming // ignore: cast_nullable_to_non_nullable
-              as double?,
-      likedCreator: freezed == likedCreator
-          ? _value._likedCreator
-          : likedCreator // ignore: cast_nullable_to_non_nullable
-              as List<LikedCreator>?,
       creatorRoom: freezed == creatorRoom
           ? _value._creatorRoom
           : creatorRoom // ignore: cast_nullable_to_non_nullable
               as List<dynamic>?,
-      pointsFormUser: freezed == pointsFormUser
-          ? _value._pointsFormUser
-          : pointsFormUser // ignore: cast_nullable_to_non_nullable
-              as List<PointFormUser>?,
       rank: freezed == rank
           ? _value.rank
           : rank // ignore: cast_nullable_to_non_nullable
@@ -814,6 +593,18 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.totalRating
           : totalRating // ignore: cast_nullable_to_non_nullable
               as int?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as Status?,
+      waitingCount: freezed == waitingCount
+          ? _value.waitingCount
+          : waitingCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      timeWaiting: freezed == timeWaiting
+          ? _value.timeWaiting
+          : timeWaiting // ignore: cast_nullable_to_non_nullable
+              as int?,
       refUrl: freezed == refUrl
           ? _value.refUrl
           : refUrl // ignore: cast_nullable_to_non_nullable
@@ -822,10 +613,6 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.lang
           : lang // ignore: cast_nullable_to_non_nullable
               as String?,
-      agentOfCreator: freezed == agentOfCreator
-          ? _value._agentOfCreator
-          : agentOfCreator // ignore: cast_nullable_to_non_nullable
-              as List<AgentOfCreator>?,
       avatar: freezed == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -842,6 +629,18 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.isManagedByThisAgent
           : isManagedByThisAgent // ignore: cast_nullable_to_non_nullable
               as bool,
+      historyCall: freezed == historyCall
+          ? _value._historyCall
+          : historyCall // ignore: cast_nullable_to_non_nullable
+              as List<HistoryCall>?,
+      isCalling: null == isCalling
+          ? _value.isCalling
+          : isCalling // ignore: cast_nullable_to_non_nullable
+              as bool,
+      totalCallTime: freezed == totalCallTime
+          ? _value.totalCallTime
+          : totalCallTime // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -858,48 +657,30 @@ class _$UserImpl implements _User {
       @RoleConverter()
       required this.role,
       @JsonKey(name: 'nickname') this.nickname,
-      @JsonKey(name: 'name') this.name,
+      @JsonKey(name: 'fullname') this.fullName,
       @JsonKey(name: 'name_kata') this.nameKata,
       @JsonKey(name: 'birthdate') this.birthdate,
       @JsonKey(name: 'tel') this.tel,
       @JsonKey(name: 'is_online', defaultValue: false) required this.isOnline,
-      @JsonKey(name: 'stripe_token') this.stripeToken,
-      @JsonKey(name: 'initial_call_timing') required this.initialCallTiming,
-      @JsonKey(name: 'initial_call_fee') required this.initialCallFee,
-      @JsonKey(name: 'after_call_timing') required this.afterCallTiming,
-      @JsonKey(name: 'after_call_fee') required this.afterCallFee,
       @JsonKey(name: 'welcome_messages') this.welcomeMessages,
       @JsonKey(name: 'evaluate_score') required this.evaluateScore,
       @JsonKey(name: 'total_evaluated') required this.totalEvaluated,
       @JsonKey(name: 'gender') required this.gender,
       @JsonKey(name: 'point_balance') this.pointBalance,
-      @JsonKey(name: 'withdraw_pending') this.withdrawPending,
-      @JsonKey(name: 'x_account_url') this.xAccountUrl,
-      @JsonKey(name: 'fb_account_url') this.fbAccountUrl,
-      @JsonKey(name: 'instagram_account_url') this.instagramAccountUrl,
-      @JsonKey(name: 'tiktok_account_url') this.tiktokAccountUrl,
-      @JsonKey(name: 'agent_10_code') this.agent10Code,
-      @JsonKey(name: 'agent_15_code') this.agent15Code,
-      @JsonKey(name: 'agent_20_code') this.agent20Code,
       @JsonKey(name: 'avatar_img_id') this.avatarImgId,
       @JsonKey(name: 'cover_img_id') this.coverImgId,
-      @JsonKey(name: 'is_email_verified') required this.isEmailVerified,
-      @JsonKey(name: 'status') this.status,
-      @JsonKey(name: 'is_deleted') required this.isDeleted,
-      @JsonKey(name: 'like_count') this.likeCount,
       @JsonKey(name: 'average_rating') this.averageRating,
-      @JsonKey(name: 'call_fee_per_timing') this.callFeePerTiming,
-      @JsonKey(name: 'liked_creator') final List<LikedCreator>? likedCreator,
       @JsonKey(name: 'creator_room') final List<dynamic>? creatorRoom,
-      @JsonKey(name: 'point_form_user', defaultValue: [])
-      final List<PointFormUser>? pointsFormUser,
       @JsonKey(name: 'rank') this.rank,
       @JsonKey(name: 'total_point', defaultValue: 0) this.totalPoint,
       @JsonKey(name: 'total_rating', defaultValue: 0) this.totalRating,
+      @JsonKey(name: 'status', includeFromJson: true)
+      @StatusConverter()
+      this.status,
+      @JsonKey(name: 'waiting_count', defaultValue: 0) this.waitingCount,
+      @JsonKey(name: 'time_waiting', defaultValue: 0) this.timeWaiting,
       @JsonKey(name: 'url') this.refUrl,
       @JsonKey(name: 'lang') this.lang,
-      @JsonKey(readValue: _creatorReader)
-      final List<AgentOfCreator>? agentOfCreator,
       @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
       @AvatarConverter()
       this.avatar,
@@ -910,11 +691,15 @@ class _$UserImpl implements _User {
           name: 'notify_setting', includeFromJson: true, includeIfNull: false)
       @CoverConverter()
       this.notifySetting,
-      this.isManagedByThisAgent = false})
-      : _likedCreator = likedCreator,
-        _creatorRoom = creatorRoom,
-        _pointsFormUser = pointsFormUser,
-        _agentOfCreator = agentOfCreator;
+      this.isManagedByThisAgent = false,
+      @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true)
+      final List<HistoryCall>? historyCall,
+      @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true)
+      @IsCallingConverter()
+      required this.isCalling,
+      @JsonKey(name: 'total_time', defaultValue: 0) this.totalCallTime})
+      : _creatorRoom = creatorRoom,
+        _historyCall = historyCall;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserImplFromJson(json);
@@ -939,8 +724,8 @@ class _$UserImpl implements _User {
   @JsonKey(name: 'nickname')
   final String? nickname;
   @override
-  @JsonKey(name: 'name')
-  final String? name;
+  @JsonKey(name: 'fullname')
+  final String? fullName;
   @override
   @JsonKey(name: 'name_kata')
   final String? nameKata;
@@ -953,21 +738,6 @@ class _$UserImpl implements _User {
   @override
   @JsonKey(name: 'is_online', defaultValue: false)
   final bool isOnline;
-  @override
-  @JsonKey(name: 'stripe_token')
-  final String? stripeToken;
-  @override
-  @JsonKey(name: 'initial_call_timing')
-  final int? initialCallTiming;
-  @override
-  @JsonKey(name: 'initial_call_fee')
-  final int? initialCallFee;
-  @override
-  @JsonKey(name: 'after_call_timing')
-  final int? afterCallTiming;
-  @override
-  @JsonKey(name: 'after_call_fee')
-  final int? afterCallFee;
   @override
   @JsonKey(name: 'welcome_messages')
   final String? welcomeMessages;
@@ -984,64 +754,14 @@ class _$UserImpl implements _User {
   @JsonKey(name: 'point_balance')
   final int? pointBalance;
   @override
-  @JsonKey(name: 'withdraw_pending')
-  final int? withdrawPending;
-  @override
-  @JsonKey(name: 'x_account_url')
-  final String? xAccountUrl;
-  @override
-  @JsonKey(name: 'fb_account_url')
-  final String? fbAccountUrl;
-  @override
-  @JsonKey(name: 'instagram_account_url')
-  final String? instagramAccountUrl;
-  @override
-  @JsonKey(name: 'tiktok_account_url')
-  final String? tiktokAccountUrl;
-  @override
-  @JsonKey(name: 'agent_10_code')
-  final String? agent10Code;
-  @override
-  @JsonKey(name: 'agent_15_code')
-  final String? agent15Code;
-  @override
-  @JsonKey(name: 'agent_20_code')
-  final String? agent20Code;
-  @override
   @JsonKey(name: 'avatar_img_id')
   final int? avatarImgId;
   @override
   @JsonKey(name: 'cover_img_id')
   final int? coverImgId;
   @override
-  @JsonKey(name: 'is_email_verified')
-  final bool? isEmailVerified;
-  @override
-  @JsonKey(name: 'status')
-  final int? status;
-  @override
-  @JsonKey(name: 'is_deleted')
-  final bool? isDeleted;
-  @override
-  @JsonKey(name: 'like_count')
-  final int? likeCount;
-  @override
   @JsonKey(name: 'average_rating')
   final double? averageRating;
-  @override
-  @JsonKey(name: 'call_fee_per_timing')
-  final double? callFeePerTiming;
-  final List<LikedCreator>? _likedCreator;
-  @override
-  @JsonKey(name: 'liked_creator')
-  List<LikedCreator>? get likedCreator {
-    final value = _likedCreator;
-    if (value == null) return null;
-    if (_likedCreator is EqualUnmodifiableListView) return _likedCreator;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   final List<dynamic>? _creatorRoom;
   @override
   @JsonKey(name: 'creator_room')
@@ -1049,17 +769,6 @@ class _$UserImpl implements _User {
     final value = _creatorRoom;
     if (value == null) return null;
     if (_creatorRoom is EqualUnmodifiableListView) return _creatorRoom;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  final List<PointFormUser>? _pointsFormUser;
-  @override
-  @JsonKey(name: 'point_form_user', defaultValue: [])
-  List<PointFormUser>? get pointsFormUser {
-    final value = _pointsFormUser;
-    if (value == null) return null;
-    if (_pointsFormUser is EqualUnmodifiableListView) return _pointsFormUser;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -1074,22 +783,21 @@ class _$UserImpl implements _User {
   @JsonKey(name: 'total_rating', defaultValue: 0)
   final int? totalRating;
   @override
+  @JsonKey(name: 'status', includeFromJson: true)
+  @StatusConverter()
+  final Status? status;
+  @override
+  @JsonKey(name: 'waiting_count', defaultValue: 0)
+  final int? waitingCount;
+  @override
+  @JsonKey(name: 'time_waiting', defaultValue: 0)
+  final int? timeWaiting;
+  @override
   @JsonKey(name: 'url')
   final String? refUrl;
   @override
   @JsonKey(name: 'lang')
   final String? lang;
-  final List<AgentOfCreator>? _agentOfCreator;
-  @override
-  @JsonKey(readValue: _creatorReader)
-  List<AgentOfCreator>? get agentOfCreator {
-    final value = _agentOfCreator;
-    if (value == null) return null;
-    if (_agentOfCreator is EqualUnmodifiableListView) return _agentOfCreator;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   @override
   @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
   @AvatarConverter()
@@ -1105,10 +813,28 @@ class _$UserImpl implements _User {
   @override
   @JsonKey()
   final bool isManagedByThisAgent;
+  final List<HistoryCall>? _historyCall;
+  @override
+  @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true)
+  List<HistoryCall>? get historyCall {
+    final value = _historyCall;
+    if (value == null) return null;
+    if (_historyCall is EqualUnmodifiableListView) return _historyCall;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true)
+  @IsCallingConverter()
+  final bool isCalling;
+  @override
+  @JsonKey(name: 'total_time', defaultValue: 0)
+  final int? totalCallTime;
 
   @override
   String toString() {
-    return 'User(id: $id, snsId: $snsId, email: $email, authenCode: $authenCode, role: $role, nickname: $nickname, name: $name, nameKata: $nameKata, birthdate: $birthdate, tel: $tel, isOnline: $isOnline, stripeToken: $stripeToken, initialCallTiming: $initialCallTiming, initialCallFee: $initialCallFee, afterCallTiming: $afterCallTiming, afterCallFee: $afterCallFee, welcomeMessages: $welcomeMessages, evaluateScore: $evaluateScore, totalEvaluated: $totalEvaluated, gender: $gender, pointBalance: $pointBalance, withdrawPending: $withdrawPending, xAccountUrl: $xAccountUrl, fbAccountUrl: $fbAccountUrl, instagramAccountUrl: $instagramAccountUrl, tiktokAccountUrl: $tiktokAccountUrl, agent10Code: $agent10Code, agent15Code: $agent15Code, agent20Code: $agent20Code, avatarImgId: $avatarImgId, coverImgId: $coverImgId, isEmailVerified: $isEmailVerified, status: $status, isDeleted: $isDeleted, likeCount: $likeCount, averageRating: $averageRating, callFeePerTiming: $callFeePerTiming, likedCreator: $likedCreator, creatorRoom: $creatorRoom, pointsFormUser: $pointsFormUser, rank: $rank, totalPoint: $totalPoint, totalRating: $totalRating, refUrl: $refUrl, lang: $lang, agentOfCreator: $agentOfCreator, avatar: $avatar, cover: $cover, notifySetting: $notifySetting, isManagedByThisAgent: $isManagedByThisAgent)';
+    return 'User(id: $id, snsId: $snsId, email: $email, authenCode: $authenCode, role: $role, nickname: $nickname, fullName: $fullName, nameKata: $nameKata, birthdate: $birthdate, tel: $tel, isOnline: $isOnline, welcomeMessages: $welcomeMessages, evaluateScore: $evaluateScore, totalEvaluated: $totalEvaluated, gender: $gender, pointBalance: $pointBalance, avatarImgId: $avatarImgId, coverImgId: $coverImgId, averageRating: $averageRating, creatorRoom: $creatorRoom, rank: $rank, totalPoint: $totalPoint, totalRating: $totalRating, status: $status, waitingCount: $waitingCount, timeWaiting: $timeWaiting, refUrl: $refUrl, lang: $lang, avatar: $avatar, cover: $cover, notifySetting: $notifySetting, isManagedByThisAgent: $isManagedByThisAgent, historyCall: $historyCall, isCalling: $isCalling, totalCallTime: $totalCallTime)';
   }
 
   @override
@@ -1124,7 +850,8 @@ class _$UserImpl implements _User {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname) &&
-            (identical(other.name, name) || other.name == name) &&
+            (identical(other.fullName, fullName) ||
+                other.fullName == fullName) &&
             (identical(other.nameKata, nameKata) ||
                 other.nameKata == nameKata) &&
             (identical(other.birthdate, birthdate) ||
@@ -1132,16 +859,6 @@ class _$UserImpl implements _User {
             (identical(other.tel, tel) || other.tel == tel) &&
             (identical(other.isOnline, isOnline) ||
                 other.isOnline == isOnline) &&
-            (identical(other.stripeToken, stripeToken) ||
-                other.stripeToken == stripeToken) &&
-            (identical(other.initialCallTiming, initialCallTiming) ||
-                other.initialCallTiming == initialCallTiming) &&
-            (identical(other.initialCallFee, initialCallFee) ||
-                other.initialCallFee == initialCallFee) &&
-            (identical(other.afterCallTiming, afterCallTiming) ||
-                other.afterCallTiming == afterCallTiming) &&
-            (identical(other.afterCallFee, afterCallFee) ||
-                other.afterCallFee == afterCallFee) &&
             (identical(other.welcomeMessages, welcomeMessages) ||
                 other.welcomeMessages == welcomeMessages) &&
             (identical(other.evaluateScore, evaluateScore) ||
@@ -1151,58 +868,38 @@ class _$UserImpl implements _User {
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.pointBalance, pointBalance) ||
                 other.pointBalance == pointBalance) &&
-            (identical(other.withdrawPending, withdrawPending) ||
-                other.withdrawPending == withdrawPending) &&
-            (identical(other.xAccountUrl, xAccountUrl) ||
-                other.xAccountUrl == xAccountUrl) &&
-            (identical(other.fbAccountUrl, fbAccountUrl) ||
-                other.fbAccountUrl == fbAccountUrl) &&
-            (identical(other.instagramAccountUrl, instagramAccountUrl) ||
-                other.instagramAccountUrl == instagramAccountUrl) &&
-            (identical(other.tiktokAccountUrl, tiktokAccountUrl) ||
-                other.tiktokAccountUrl == tiktokAccountUrl) &&
-            (identical(other.agent10Code, agent10Code) ||
-                other.agent10Code == agent10Code) &&
-            (identical(other.agent15Code, agent15Code) ||
-                other.agent15Code == agent15Code) &&
-            (identical(other.agent20Code, agent20Code) ||
-                other.agent20Code == agent20Code) &&
             (identical(other.avatarImgId, avatarImgId) ||
                 other.avatarImgId == avatarImgId) &&
             (identical(other.coverImgId, coverImgId) ||
                 other.coverImgId == coverImgId) &&
-            (identical(other.isEmailVerified, isEmailVerified) ||
-                other.isEmailVerified == isEmailVerified) &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.isDeleted, isDeleted) ||
-                other.isDeleted == isDeleted) &&
-            (identical(other.likeCount, likeCount) ||
-                other.likeCount == likeCount) &&
             (identical(other.averageRating, averageRating) ||
                 other.averageRating == averageRating) &&
-            (identical(other.callFeePerTiming, callFeePerTiming) ||
-                other.callFeePerTiming == callFeePerTiming) &&
-            const DeepCollectionEquality()
-                .equals(other._likedCreator, _likedCreator) &&
             const DeepCollectionEquality()
                 .equals(other._creatorRoom, _creatorRoom) &&
-            const DeepCollectionEquality()
-                .equals(other._pointsFormUser, _pointsFormUser) &&
             (identical(other.rank, rank) || other.rank == rank) &&
             (identical(other.totalPoint, totalPoint) ||
                 other.totalPoint == totalPoint) &&
             (identical(other.totalRating, totalRating) ||
                 other.totalRating == totalRating) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.waitingCount, waitingCount) ||
+                other.waitingCount == waitingCount) &&
+            (identical(other.timeWaiting, timeWaiting) ||
+                other.timeWaiting == timeWaiting) &&
             (identical(other.refUrl, refUrl) || other.refUrl == refUrl) &&
             (identical(other.lang, lang) || other.lang == lang) &&
-            const DeepCollectionEquality()
-                .equals(other._agentOfCreator, _agentOfCreator) &&
             (identical(other.avatar, avatar) || other.avatar == avatar) &&
             (identical(other.cover, cover) || other.cover == cover) &&
             (identical(other.notifySetting, notifySetting) ||
                 other.notifySetting == notifySetting) &&
             (identical(other.isManagedByThisAgent, isManagedByThisAgent) ||
-                other.isManagedByThisAgent == isManagedByThisAgent));
+                other.isManagedByThisAgent == isManagedByThisAgent) &&
+            const DeepCollectionEquality()
+                .equals(other._historyCall, _historyCall) &&
+            (identical(other.isCalling, isCalling) ||
+                other.isCalling == isCalling) &&
+            (identical(other.totalCallTime, totalCallTime) ||
+                other.totalCallTime == totalCallTime));
   }
 
   @JsonKey(ignore: true)
@@ -1215,50 +912,35 @@ class _$UserImpl implements _User {
         authenCode,
         role,
         nickname,
-        name,
+        fullName,
         nameKata,
         birthdate,
         tel,
         isOnline,
-        stripeToken,
-        initialCallTiming,
-        initialCallFee,
-        afterCallTiming,
-        afterCallFee,
         welcomeMessages,
         evaluateScore,
         totalEvaluated,
         gender,
         pointBalance,
-        withdrawPending,
-        xAccountUrl,
-        fbAccountUrl,
-        instagramAccountUrl,
-        tiktokAccountUrl,
-        agent10Code,
-        agent15Code,
-        agent20Code,
         avatarImgId,
         coverImgId,
-        isEmailVerified,
-        status,
-        isDeleted,
-        likeCount,
         averageRating,
-        callFeePerTiming,
-        const DeepCollectionEquality().hash(_likedCreator),
         const DeepCollectionEquality().hash(_creatorRoom),
-        const DeepCollectionEquality().hash(_pointsFormUser),
         rank,
         totalPoint,
         totalRating,
+        status,
+        waitingCount,
+        timeWaiting,
         refUrl,
         lang,
-        const DeepCollectionEquality().hash(_agentOfCreator),
         avatar,
         cover,
         notifySetting,
-        isManagedByThisAgent
+        isManagedByThisAgent,
+        const DeepCollectionEquality().hash(_historyCall),
+        isCalling,
+        totalCallTime
       ]);
 
   @JsonKey(ignore: true)
@@ -1285,50 +967,31 @@ abstract class _User implements User {
       @RoleConverter()
       required final Role? role,
       @JsonKey(name: 'nickname') final String? nickname,
-      @JsonKey(name: 'name') final String? name,
+      @JsonKey(name: 'fullname') final String? fullName,
       @JsonKey(name: 'name_kata') final String? nameKata,
       @JsonKey(name: 'birthdate') final String? birthdate,
       @JsonKey(name: 'tel') final String? tel,
       @JsonKey(name: 'is_online', defaultValue: false)
       required final bool isOnline,
-      @JsonKey(name: 'stripe_token') final String? stripeToken,
-      @JsonKey(name: 'initial_call_timing')
-      required final int? initialCallTiming,
-      @JsonKey(name: 'initial_call_fee') required final int? initialCallFee,
-      @JsonKey(name: 'after_call_timing') required final int? afterCallTiming,
-      @JsonKey(name: 'after_call_fee') required final int? afterCallFee,
       @JsonKey(name: 'welcome_messages') final String? welcomeMessages,
       @JsonKey(name: 'evaluate_score') required final double? evaluateScore,
       @JsonKey(name: 'total_evaluated') required final int? totalEvaluated,
       @JsonKey(name: 'gender') required final int? gender,
       @JsonKey(name: 'point_balance') final int? pointBalance,
-      @JsonKey(name: 'withdraw_pending') final int? withdrawPending,
-      @JsonKey(name: 'x_account_url') final String? xAccountUrl,
-      @JsonKey(name: 'fb_account_url') final String? fbAccountUrl,
-      @JsonKey(name: 'instagram_account_url') final String? instagramAccountUrl,
-      @JsonKey(name: 'tiktok_account_url') final String? tiktokAccountUrl,
-      @JsonKey(name: 'agent_10_code') final String? agent10Code,
-      @JsonKey(name: 'agent_15_code') final String? agent15Code,
-      @JsonKey(name: 'agent_20_code') final String? agent20Code,
       @JsonKey(name: 'avatar_img_id') final int? avatarImgId,
       @JsonKey(name: 'cover_img_id') final int? coverImgId,
-      @JsonKey(name: 'is_email_verified') required final bool? isEmailVerified,
-      @JsonKey(name: 'status') final int? status,
-      @JsonKey(name: 'is_deleted') required final bool? isDeleted,
-      @JsonKey(name: 'like_count') final int? likeCount,
       @JsonKey(name: 'average_rating') final double? averageRating,
-      @JsonKey(name: 'call_fee_per_timing') final double? callFeePerTiming,
-      @JsonKey(name: 'liked_creator') final List<LikedCreator>? likedCreator,
       @JsonKey(name: 'creator_room') final List<dynamic>? creatorRoom,
-      @JsonKey(name: 'point_form_user', defaultValue: [])
-      final List<PointFormUser>? pointsFormUser,
       @JsonKey(name: 'rank') final int? rank,
       @JsonKey(name: 'total_point', defaultValue: 0) final int? totalPoint,
       @JsonKey(name: 'total_rating', defaultValue: 0) final int? totalRating,
+      @JsonKey(name: 'status', includeFromJson: true)
+      @StatusConverter()
+      final Status? status,
+      @JsonKey(name: 'waiting_count', defaultValue: 0) final int? waitingCount,
+      @JsonKey(name: 'time_waiting', defaultValue: 0) final int? timeWaiting,
       @JsonKey(name: 'url') final String? refUrl,
       @JsonKey(name: 'lang') final String? lang,
-      @JsonKey(readValue: _creatorReader)
-      final List<AgentOfCreator>? agentOfCreator,
       @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
       @AvatarConverter()
       final Avatar? avatar,
@@ -1339,7 +1002,14 @@ abstract class _User implements User {
           name: 'notify_setting', includeFromJson: true, includeIfNull: false)
       @CoverConverter()
       final NotifySetting? notifySetting,
-      final bool isManagedByThisAgent}) = _$UserImpl;
+      final bool isManagedByThisAgent,
+      @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true)
+      final List<HistoryCall>? historyCall,
+      @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true)
+      @IsCallingConverter()
+      required final bool isCalling,
+      @JsonKey(name: 'total_time', defaultValue: 0)
+      final int? totalCallTime}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -1363,8 +1033,8 @@ abstract class _User implements User {
   @JsonKey(name: 'nickname')
   String? get nickname;
   @override
-  @JsonKey(name: 'name')
-  String? get name;
+  @JsonKey(name: 'fullname')
+  String? get fullName;
   @override
   @JsonKey(name: 'name_kata')
   String? get nameKata;
@@ -1377,21 +1047,6 @@ abstract class _User implements User {
   @override
   @JsonKey(name: 'is_online', defaultValue: false)
   bool get isOnline;
-  @override
-  @JsonKey(name: 'stripe_token')
-  String? get stripeToken;
-  @override
-  @JsonKey(name: 'initial_call_timing')
-  int? get initialCallTiming;
-  @override
-  @JsonKey(name: 'initial_call_fee')
-  int? get initialCallFee;
-  @override
-  @JsonKey(name: 'after_call_timing')
-  int? get afterCallTiming;
-  @override
-  @JsonKey(name: 'after_call_fee')
-  int? get afterCallFee;
   @override
   @JsonKey(name: 'welcome_messages')
   String? get welcomeMessages;
@@ -1408,62 +1063,17 @@ abstract class _User implements User {
   @JsonKey(name: 'point_balance')
   int? get pointBalance;
   @override
-  @JsonKey(name: 'withdraw_pending')
-  int? get withdrawPending;
-  @override
-  @JsonKey(name: 'x_account_url')
-  String? get xAccountUrl;
-  @override
-  @JsonKey(name: 'fb_account_url')
-  String? get fbAccountUrl;
-  @override
-  @JsonKey(name: 'instagram_account_url')
-  String? get instagramAccountUrl;
-  @override
-  @JsonKey(name: 'tiktok_account_url')
-  String? get tiktokAccountUrl;
-  @override
-  @JsonKey(name: 'agent_10_code')
-  String? get agent10Code;
-  @override
-  @JsonKey(name: 'agent_15_code')
-  String? get agent15Code;
-  @override
-  @JsonKey(name: 'agent_20_code')
-  String? get agent20Code;
-  @override
   @JsonKey(name: 'avatar_img_id')
   int? get avatarImgId;
   @override
   @JsonKey(name: 'cover_img_id')
   int? get coverImgId;
   @override
-  @JsonKey(name: 'is_email_verified')
-  bool? get isEmailVerified;
-  @override
-  @JsonKey(name: 'status')
-  int? get status;
-  @override
-  @JsonKey(name: 'is_deleted')
-  bool? get isDeleted;
-  @override
-  @JsonKey(name: 'like_count')
-  int? get likeCount;
-  @override
   @JsonKey(name: 'average_rating')
   double? get averageRating;
   @override
-  @JsonKey(name: 'call_fee_per_timing')
-  double? get callFeePerTiming;
-  @override
-  @JsonKey(name: 'liked_creator')
-  List<LikedCreator>? get likedCreator;
-  @override
   @JsonKey(name: 'creator_room')
   List<dynamic>? get creatorRoom;
-  @override
-  @JsonKey(name: 'point_form_user', defaultValue: [])
-  List<PointFormUser>? get pointsFormUser;
   @override
   @JsonKey(name: 'rank')
   int? get rank;
@@ -1474,14 +1084,21 @@ abstract class _User implements User {
   @JsonKey(name: 'total_rating', defaultValue: 0)
   int? get totalRating;
   @override
+  @JsonKey(name: 'status', includeFromJson: true)
+  @StatusConverter()
+  Status? get status;
+  @override
+  @JsonKey(name: 'waiting_count', defaultValue: 0)
+  int? get waitingCount;
+  @override
+  @JsonKey(name: 'time_waiting', defaultValue: 0)
+  int? get timeWaiting;
+  @override
   @JsonKey(name: 'url')
   String? get refUrl;
   @override
   @JsonKey(name: 'lang')
   String? get lang;
-  @override
-  @JsonKey(readValue: _creatorReader)
-  List<AgentOfCreator>? get agentOfCreator;
   @override
   @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
   @AvatarConverter()
@@ -1496,6 +1113,16 @@ abstract class _User implements User {
   NotifySetting? get notifySetting;
   @override
   bool get isManagedByThisAgent;
+  @override
+  @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true)
+  List<HistoryCall>? get historyCall;
+  @override
+  @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true)
+  @IsCallingConverter()
+  bool get isCalling;
+  @override
+  @JsonKey(name: 'total_time', defaultValue: 0)
+  int? get totalCallTime;
   @override
   @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>

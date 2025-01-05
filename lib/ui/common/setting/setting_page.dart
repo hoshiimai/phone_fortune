@@ -1,14 +1,15 @@
 import 'package:callmobile/core/model/enum/enum_role.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/ui/creator/main/interactor/main_creator_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
+import '../../../core/managers/signaling.dart';
 import '../../../core/model/enum/enum_bottom_navigation_page.dart';
 import '../../../core/model/enum/enum_setting.dart';
 import '../../../core/model/response/model/user.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_dimensions.dart';
@@ -64,8 +65,8 @@ class SettingPage extends StatelessWidget {
               }
               return Scaffold(
                 extendBodyBehindAppBar: true,
-                appBar: CustomAppBar(
-                  title: LocaleKey.settingTitle.tr,
+                appBar: const CustomAppBar(
+                  title: 'マイページ',
                   isShowLogo: true,
                 ),
                 body: BasePage(
@@ -95,8 +96,10 @@ class SettingPage extends StatelessWidget {
                                           Navigator.of(context).pushNamed(AppPages.personalInfoEdit);
                                         } else if (e == SettingType.logout) {
                                           final appShared = Get.find<AppShared>();
+                                          Get.find<Signaling>().close();
+                                          Get.delete<Signaling>();
                                           appShared.clearUserData();
-                                          Get.offNamedUntil(AppPages.signIn, (route) => false);
+                                          Get.offAllNamed(AppPages.signIn);
                                         }
                                       },
                                       getIcon: (item) => item.icon,

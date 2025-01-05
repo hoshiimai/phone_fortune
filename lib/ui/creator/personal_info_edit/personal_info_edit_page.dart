@@ -1,4 +1,4 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 
 import '../../../core/model/response/model/user.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
@@ -45,7 +45,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
   }
 
   void _fillData(User? user) {
-    fullNameController?.text = user?.name ?? '';
+    fullNameController?.text = user?.fullName ?? '';
     kataNameController ?.text = user?.nameKata ?? '';
     birthDateController?.text =  user?.birthdate != null ? user!.birthdate! : '';
     phoneNumberController?.text = user?.tel ?? '';
@@ -77,7 +77,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
             success: Scaffold(
               extendBodyBehindAppBar: true,
               appBar: CustomAppBar(
-                  title: LocaleKey.personalInfo.tr, iconLeading: AppAssets.ic_back_2_svg),
+                  title: '本人情報', iconLeading: AppAssets.ic_back_2_svg),
               body: BasePage(
                 unFocusWhenTouchOutsideInput: true,
                 child: Padding(
@@ -94,7 +94,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                         children: [
                           24.height,
                           Text(
-                            LocaleKey.fullName.tr,
+                            '氏名',
                             style: AppStyles.fontSize14(
                               fontWeight: FontWeight.w600,
                               height: 21 / 14,
@@ -103,7 +103,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                           ),
                           12.height,
                           AppTextField(
-                            hintText: LocaleKey.hintFullName.tr,
+                            hintText: '(例)山田太郎',
                             borderColor: AppColors.colorDEDEDE,
                             textStyleColor: AppColors.black,
                             controller: fullNameController,
@@ -114,7 +114,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                           ),
                           15.height,
                           Text(
-                            LocaleKey.katakana.tr,
+                            'カタカナ',
                             style: AppStyles.fontSize14(
                               fontWeight: FontWeight.w600,
                               height: 21 / 14,
@@ -124,7 +124,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                           12.height,
                           AppTextField(
                             controller: kataNameController,
-                            hintText: LocaleKey.hintKatakana.tr,
+                            hintText: '(例)ヤマダタロウ',
                             borderColor: AppColors.colorDEDEDE,
                             textStyleColor: AppColors.black,
                             onChanged: (value) {
@@ -134,7 +134,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                           ),
                           15.height,
                           Text(
-                            LocaleKey.dateOfBirth.tr,
+                            '生年月日',
                             style: AppStyles.fontSize14(
                               fontWeight: FontWeight.w600,
                               height: 21 / 14,
@@ -146,7 +146,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                             children: [
                               AppTextField(
                                 controller: birthDateController,
-                                hintText: LocaleKey.hintDateOfBirth.tr,
+                                hintText: '生年月日',
                                 borderColor: AppColors.colorDEDEDE,
                                 textStyleColor: AppColors.black,
                                 errors: [state.validBirthDate],
@@ -183,7 +183,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                           ),
                           15.height,
                           Text(
-                            LocaleKey.telephoneNumber.tr,
+                            '電話番号',
                             style: AppStyles.fontSize14(
                               fontWeight: FontWeight.w600,
                               height: 21 / 14,
@@ -193,7 +193,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                           12.height,
                           AppTextField(
                             controller: phoneNumberController,
-                            hintText: LocaleKey.hintPhone.tr,
+                            hintText: '0000000000',
                             borderColor: AppColors.colorDEDEDE,
                             textStyleColor: AppColors.black,
                             onChanged: (value) {
@@ -213,7 +213,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                               },
                               width: (Get.width - 50) / 2,
                               height: 55,
-                              title: LocaleKey.save.tr,
+                              title: '登録する',
                             ),
                             const Spacer(),
                             AppButton(
@@ -221,7 +221,7 @@ class PersonalInfoEditPageState extends State<PersonalInfoEditPage> {
                               backgroundColor: AppColors.color9B9B9B,
                               width: (Get.width - 50) / 2,
                               height: 55,
-                              title: LocaleKey.cancel.tr,
+                              title: 'キャンセル',
                             )
                           ])
                         ],

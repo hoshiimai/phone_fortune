@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/model/enum/password_type.dart';
 import '../../../../core/model/response/model/user.dart';
 import '../../../../core/repository/interface/i_auth_repository.dart';
-import '../../../../helper/validation.dart';
+import '../../../../utils/helper/validation.dart';
 import '../../../../utils/app_shared.dart';
 import '../../../base/interactor/page_states.dart';
 import '../../../widgets/base/toast/app_toast.dart';
@@ -73,10 +73,18 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
           validEmail: valid,
           verifyEmailStatus: event.isFromVerify ? PageState.loadingFull : state.verifyEmailStatus,
           status: event.isFromVerify ? state.status : PageState.loadingFull));
-
+      final response = await authRepository.updateEmail(email: state.email);
+      response.fold((error) {
+        showErrorToast(error.message);
+        emit(state.copyWith(
+            verifyEmailStatus: event.isFromVerify ? PageState.failure : state.verifyEmailStatus,
+            status: event.isFromVerify ? state.status : PageState.failure));
+      }, (message) {
+        showSuccessToast(message);
         emit(state.copyWith(
             verifyEmailStatus: event.isFromVerify ? PageState.success : state.verifyEmailStatus,
             status: event.isFromVerify ? state.status : PageState.success));
+      });
     } else {
       emit(state.copyWith(
         code: '',
@@ -89,17 +97,23 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
     final validCurrentPass = Validation.validatePassword(state.currentPass);
     final validNewPass = Validation.validateUpdatePassword(state.newPass);
     final validConfirmPass =
-        Validation.validateMatchConfirmPassword(confirmPassword: state.confirmPass, password: state.newPass, isUpdate: true);
+    Validation.validateMatchConfirmPassword(confirmPassword: state.confirmPass, password: state.newPass, isUpdate: true);
     if (validCurrentPass.isEmpty && validNewPass.isEmpty && validConfirmPass.isEmpty) {
       emit(state.copyWith(
           validCurrentPass: validCurrentPass,
           validNewPass: validNewPass,
           validConfirmPass: validConfirmPass,
           status: PageState.loadingFull));
-
-        showSuccessToast('Update password success');
+      final response = await authRepository.updatePassword(
+          currentPass: state.currentPass, newPass: state.newPass, confirmPass: state.confirmPass);
+      response.fold((error) {
+        showErrorToast(error.message);
+        emit(state.copyWith(status: PageState.failure));
+      }, (message) {
+        showSuccessToast(message);
         emit(state.copyWith(status: PageState.success));
         event.onUpdatePasswordSuccess.call();
+      });
     } else {
       emit(state.copyWith(
         validCurrentPass: validCurrentPass,
@@ -123,10 +137,15 @@ class InfoBloc extends Bloc<InfoEvent, InfoState> {
     emit(state.copyWith(
       verifyEmailStatus: PageState.loadingFull,
     ));
-    await Future.delayed(const Duration(seconds: 2));
+    final response = await authRepository.updateEmailComplete(code: state.code);
+    response.fold((error) {
+      emit(state.copyWith(verifyEmailStatus: PageState.failure));
+      showErrorToast(error.message);
+    }, (data) async {
       final appShared = Get.find<AppShared>();
       final user = state.user?.copyWith(email: state.email);
       appShared.setUser(user);
       emit(state.copyWith(verifyEmailStatus: PageState.success, user: user));
+    });
   }
 }

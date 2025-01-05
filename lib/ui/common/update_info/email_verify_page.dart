@@ -1,19 +1,19 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_dimensions.dart';
 import '../../../utils/app_styles.dart';
-import '../../auth/pin_code/component/otp_input.dart';
 import '../../base/base_page.dart';
 import '../../base/interactor/page_states.dart';
 import '../../widgets/app_single_scrollview.dart';
 import '../../widgets/base/app_body.dart';
+import '../pin_code/component/otp_input.dart';
 import 'interactor/info_bloc.dart';
 
 class EmailVerifyPage extends StatefulWidget {
@@ -59,8 +59,8 @@ class EmailVerifyPageState extends State<EmailVerifyPage> {
           pageState: state.verifyEmailStatus,
           success: Scaffold(
             extendBodyBehindAppBar: true,
-            appBar: CustomAppBar(
-                title: LocaleKey.emailChangeTitle.tr, iconLeading: AppAssets.ic_back_2_svg),
+            appBar: const CustomAppBar(
+                title: 'メールアドレス編集', iconLeading: AppAssets.ic_back_2_svg),
             body: BasePage(
               unFocusWhenTouchOutsideInput: true,
               child: AppSingleScrollView(
@@ -78,7 +78,7 @@ class EmailVerifyPageState extends State<EmailVerifyPage> {
                         30.height,
                         Center(
                           child: Text(
-                            LocaleKey.verifyOtp.tr,
+                            '認証コードを入力してください',
                             textAlign: TextAlign.center,
                             style: AppStyles.fontSize16(fontWeight: FontWeight.w600, color: AppColors.black),
                           ),
@@ -86,7 +86,7 @@ class EmailVerifyPageState extends State<EmailVerifyPage> {
                         25.height,
                         Center(
                           child: Text(
-                            LocaleKey.verifyOtpContent.tr,
+                            'メールアドレスに送信した認証コードを\n入力してください',
                             textAlign: TextAlign.center,
                             style: AppStyles.fontSize14(color: AppColors.black),
                           ),
@@ -108,7 +108,7 @@ class EmailVerifyPageState extends State<EmailVerifyPage> {
                               Get.find<InfoBloc>().add(const OnSubmitEmail(true));
                             },
                             child: Text(
-                              LocaleKey.resend.tr,
+                              'メールを再送する',
                               textAlign: TextAlign.center,
                               style: AppStyles.fontSize14(color: AppColors.black, fontWeight: FontWeight.bold),
                             ),

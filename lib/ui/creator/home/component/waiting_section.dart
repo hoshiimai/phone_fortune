@@ -1,19 +1,17 @@
-import 'package:callmobile/extensions/int_extensions.dart';
-import 'package:callmobile/ui/widgets/app_button.dart';
-import 'package:callmobile/ui/widgets/app_image.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/ui/widgets/common/fan_waiting_item.dart';
 import 'package:callmobile/utils/app_assets.dart';
 import 'package:callmobile/utils/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/model/business/fan_waiting_info.dart';
+import '../../../../core/model/response/model/user.dart';
 import '../../../../utils/app_colors.dart';
 
 class WaitingSection extends StatelessWidget {
-  final List<FanWaitingInfo> infos;
+  final List<User> fans;
 
-  const WaitingSection({super.key, required this.infos,});
+  const WaitingSection({super.key, required this.fans,});
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +43,11 @@ class WaitingSection extends StatelessWidget {
             ],
           ),
           10.height,
-          ...infos.asMap().entries.map<Widget>((entry) {
+          ...fans.asMap().entries.map<Widget>((entry) {
             int index = entry.key;
             var info = entry.value;
             return FanWaitingItem(
-              index: index+1, info: info, isShow: index == 1, );
+              index: index+1, fan: info, isShow: index == 1, );
           })
         ],
       ),

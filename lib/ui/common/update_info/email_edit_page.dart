@@ -1,9 +1,9 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
@@ -60,7 +60,7 @@ class EmailEditPageState extends State<EmailEditPage> {
           success: Scaffold(
             extendBodyBehindAppBar: true,
             appBar: CustomAppBar(
-                title: LocaleKey.emailChangeTitle.tr, iconLeading: AppAssets.ic_back_2_svg),
+                title: 'メールアドレス編集', iconLeading: AppAssets.ic_back_2_svg),
             body: BasePage(
               unFocusWhenTouchOutsideInput: true,
               child: Padding(
@@ -76,7 +76,7 @@ class EmailEditPageState extends State<EmailEditPage> {
                     children: [
                       30.height,
                       Text(
-                        LocaleKey.emailHint.tr,
+                        'メールアドレス',
                         style: AppStyles.fontSize14(
                           fontWeight: FontWeight.w600,
                           height: 21 / 14,
@@ -85,7 +85,7 @@ class EmailEditPageState extends State<EmailEditPage> {
                       ),
                       15.height,
                       AppTextField(
-                        hintText: LocaleKey.emailHint.tr,
+                        hintText: 'メールアドレス',
                         borderColor: AppColors.colorDEDEDE,
                         textStyleColor: AppColors.black,
                         controller: emailController,
@@ -102,7 +102,7 @@ class EmailEditPageState extends State<EmailEditPage> {
                           },
                           width: (Get.width - 50) / 2,
                           height: 55,
-                          title: LocaleKey.register.tr,
+                          title: '登録する',
                         ),
                         const Spacer(),
                         AppButton(
@@ -110,7 +110,7 @@ class EmailEditPageState extends State<EmailEditPage> {
                           backgroundColor: AppColors.color9B9B9B,
                           width: (Get.width - 50) / 2,
                           height: 55,
-                          title: LocaleKey.cancel.tr,
+                          title: 'キャンセル',
                         )
                       ])
                     ],

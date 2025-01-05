@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
+import '../../ui/widgets/base/toast/app_toast.dart';
+
 class SocketService {
   final String _url;
   io.Socket? _socket;
@@ -18,7 +20,7 @@ class SocketService {
     _socket = io.io(_url, <String, dynamic>{
       'transports': ['websocket'],
       'reconnection': true,
-      'reconnectionAttempts': 5,
+      'reconnectionAttempts': 9999,
       'reconnectionDelay': 2000,
     });
 
@@ -69,21 +71,17 @@ class SocketService {
     });
 
     _socket?.on('disconnect', (reason) {
-      // showErrorToast(reason);
+      showErrorToast(reason);
       onClose?.call(1000, reason);
-    });
-
-    _socket?.on('pingToUser', (data) {
-      debugPrint("receive pingToUser: $data");
     });
 
     _socket?.on('connect_error', (error) {
       debugPrint("_socket $error");
-      // if (error is String) {
-      //   showErrorToast(error);
-      // } else {
-      //   showErrorToast("Socket Connect Error");
-      // }
+      if (error is String) {
+        showErrorToast(error);
+      } else {
+        showErrorToast("Socket Connect Error");
+      }
       onClose?.call(500, error.toString());
     });
 

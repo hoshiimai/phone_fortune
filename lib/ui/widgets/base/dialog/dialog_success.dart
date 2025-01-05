@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
-import 'package:callmobile/locale/locale_key.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
+
 import 'package:callmobile/ui/widgets/app_button.dart';
 import 'package:callmobile/utils/app_colors.dart';
 import 'package:callmobile/utils/app_dimensions.dart';
@@ -55,7 +55,7 @@ class DialogSuccess extends StatelessWidget {
               onTap: () {
                 onConfirmPressed?.call();
               },
-              title: textConfirm ?? LocaleKey.ok.tr,
+              title: textConfirm ?? 'OK',
               height: 56),
         ),
       ],

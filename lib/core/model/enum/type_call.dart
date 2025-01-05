@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
 
@@ -27,9 +27,9 @@ enum TypeCall {
   String get text {
     switch (this) {
       case TypeCall.available:
-        return LocaleKey.callNew.tr;
+        return '会話する';
       case TypeCall.calling:
-        return LocaleKey.callCalling.tr;
+        return '割込会話する';
       case TypeCall.finished:
         return '';
       case TypeCall.cancel:

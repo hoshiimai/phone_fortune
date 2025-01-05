@@ -5,11 +5,10 @@ abstract class FanProfileEvent extends Equatable {
 }
 
 class Init extends FanProfileEvent {
-  final User? user;
-  const Init(this.user);
+  const Init();
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [];
 }
 
 class OnClearPageCommand extends FanProfileEvent {

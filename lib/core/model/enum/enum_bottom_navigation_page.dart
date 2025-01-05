@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:callmobile/locale/locale_key.dart';
+
 import 'package:callmobile/utils/app_assets.dart';
 
 final creatorPages = [
@@ -20,11 +20,11 @@ enum BottomNavigationPage {
   String get nameTab {
     switch (this) {
       case BottomNavigationPage.home:
-        return LocaleKey.home.tr;
+        return 'ホーム';
       case BottomNavigationPage.search:
-        return LocaleKey.search.tr;
+        return '検索';
       case BottomNavigationPage.setting:
-        return LocaleKey.setting.tr;
+        return 'マイページ';
       case BottomNavigationPage.waiting:
         return '順番待ちリスト';
     }

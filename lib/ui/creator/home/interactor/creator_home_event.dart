@@ -20,9 +20,17 @@ class OnClearPageCommand extends CreatorHomeEvent {
 }
 
 class OnUpdateStatus extends CreatorHomeEvent {
-  final CreatorStatus status;
+  final Status status;
   const OnUpdateStatus(this.status);
 
   @override
   List<Object> get props => [status];
+}
+
+class OnGetWaitingFans extends CreatorHomeEvent {
+  final bool isRefresh;
+  const OnGetWaitingFans({required this.isRefresh});
+
+  @override
+  List<Object> get props => [isRefresh];
 }

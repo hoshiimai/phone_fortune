@@ -18,3 +18,11 @@ class OnClearPageCommand extends HomeEvent {
   @override
   List<Object> get props => [];
 }
+
+class OnGetListIdol extends HomeEvent {
+  final bool isRefresh;
+  const OnGetListIdol({required this.isRefresh});
+
+  @override
+  List<Object> get props => [isRefresh];
+}

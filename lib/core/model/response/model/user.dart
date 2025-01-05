@@ -1,17 +1,13 @@
+import 'package:callmobile/core/model/business/creator_status.dart';
 import 'package:callmobile/utils/app_assets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:callmobile/core/model/enum/enum_role.dart';
-import 'package:callmobile/core/model/response/model/point_form_user.dart';
 
 import '../../../../utils/app_api_config.dart';
-import 'agent_of_creator.dart';
+import 'history_call.dart';
 
 part 'user.freezed.dart';
 part 'user.g.dart';
-
-Object? _creatorReader(Map json, String key) {
-  return json['agent_of_creator'] ?? json['creator_of_agent'];
-}
 
 @freezed
 class User with _$User {
@@ -22,46 +18,28 @@ class User with _$User {
     @JsonKey(name: 'authen_code') String? authenCode,
     @JsonKey(name: 'role', includeFromJson: true) @RoleConverter() required Role? role,
     @JsonKey(name: 'nickname') String? nickname,
-    @JsonKey(name: 'name') String? name,
+    @JsonKey(name: 'fullname') String? fullName,
     @JsonKey(name: 'name_kata') String? nameKata,
     @JsonKey(name: 'birthdate') String? birthdate,
     @JsonKey(name: 'tel') String? tel,
     @JsonKey(name: 'is_online', defaultValue: false) required bool isOnline,
-    @JsonKey(name: 'stripe_token') String? stripeToken,
-    @JsonKey(name: 'initial_call_timing') required int? initialCallTiming,
-    @JsonKey(name: 'initial_call_fee') required int? initialCallFee,
-    @JsonKey(name: 'after_call_timing') required int? afterCallTiming,
-    @JsonKey(name: 'after_call_fee') required int? afterCallFee,
     @JsonKey(name: 'welcome_messages') String? welcomeMessages,
     @JsonKey(name: 'evaluate_score') required double? evaluateScore,
     @JsonKey(name: 'total_evaluated') required int? totalEvaluated,
     @JsonKey(name: 'gender') required int? gender,
     @JsonKey(name: 'point_balance') int? pointBalance,
-    @JsonKey(name: 'withdraw_pending') int? withdrawPending,
-    @JsonKey(name: 'x_account_url') String? xAccountUrl,
-    @JsonKey(name: 'fb_account_url') String? fbAccountUrl,
-    @JsonKey(name: 'instagram_account_url') String? instagramAccountUrl,
-    @JsonKey(name: 'tiktok_account_url') String? tiktokAccountUrl,
-    @JsonKey(name: 'agent_10_code') String? agent10Code,
-    @JsonKey(name: 'agent_15_code') String? agent15Code,
-    @JsonKey(name: 'agent_20_code') String? agent20Code,
     @JsonKey(name: 'avatar_img_id') int? avatarImgId,
     @JsonKey(name: 'cover_img_id') int? coverImgId,
-    @JsonKey(name: 'is_email_verified') required bool? isEmailVerified,
-    @JsonKey(name: 'status') int? status,
-    @JsonKey(name: 'is_deleted') required bool? isDeleted,
-    @JsonKey(name: 'like_count') int? likeCount,
     @JsonKey(name: 'average_rating') double? averageRating,
-    @JsonKey(name: 'call_fee_per_timing') double? callFeePerTiming,
-    @JsonKey(name: 'liked_creator') List<LikedCreator>? likedCreator,
     @JsonKey(name: 'creator_room') List<dynamic>? creatorRoom,
-    @JsonKey(name: 'point_form_user', defaultValue: []) List<PointFormUser>? pointsFormUser,
     @JsonKey(name: 'rank') int? rank,
     @JsonKey(name: 'total_point', defaultValue: 0) int? totalPoint,
     @JsonKey(name: 'total_rating', defaultValue: 0) int? totalRating,
+    @JsonKey(name: 'status', includeFromJson: true) @StatusConverter() Status? status,
+    @JsonKey(name: 'waiting_count', defaultValue: 0) int? waitingCount,
+    @JsonKey(name: 'time_waiting', defaultValue: 0) int? timeWaiting,
     @JsonKey(name: 'url') String? refUrl,
     @JsonKey(name: 'lang') String? lang,
-    @JsonKey(readValue: _creatorReader) List<AgentOfCreator>? agentOfCreator,
     @JsonKey(name: 'avatar', includeFromJson: true, includeIfNull: false)
     @AvatarConverter()
     Avatar? avatar,
@@ -72,6 +50,9 @@ class User with _$User {
     @CoverConverter()
     NotifySetting? notifySetting,
     @Default(false) bool isManagedByThisAgent,
+    @JsonKey(name: 'user_room', defaultValue: [], includeFromJson: true,) List<HistoryCall>? historyCall,
+    @JsonKey(name: 'is_calling', includeFromJson: true, defaultValue: true) @IsCallingConverter() required bool isCalling,
+    @JsonKey(name: 'total_time', defaultValue: 0) int? totalCallTime,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -124,6 +105,26 @@ class RoleConverter implements JsonConverter<Role, int?> {
   int toJson(Role object) => object.toInt();
 }
 
+class StatusConverter implements JsonConverter<Status, int?> {
+  const StatusConverter();
+
+  @override
+  Status fromJson(int? json) => json != null ? Status.fromInt(json) : Status.offline;
+
+  @override
+  int toJson(Status object) => object.toInt();
+}
+
+class IsCallingConverter implements JsonConverter<bool, int?> {
+  const IsCallingConverter();
+
+  @override
+  bool fromJson(int? json) => json != 1 ? false : true;
+
+  @override
+  int toJson(bool isCalling) => isCalling ? 1 : 0;
+}
+
 class AvatarConverter implements JsonConverter<Avatar, Map<String, dynamic>> {
   const AvatarConverter();
 
@@ -144,34 +145,20 @@ class CoverConverter implements JsonConverter<Cover, Map<String, dynamic>> {
   Map<String, dynamic> toJson(Cover object) => object.toJson();
 }
 
-class NotifySettingConverter implements JsonConverter<NotifySetting, Map<String, dynamic>> {
-  const NotifySettingConverter();
-
-  @override
-  NotifySetting fromJson(dynamic json) => NotifySetting.fromJson(json);
-
-  @override
-  Map<String, dynamic> toJson(NotifySetting object) => object.toJson();
-}
-
 extension UserExt on User {
   String getAvatarPath() {
     return (avatar?.filePath.isEmpty ?? true)
-        ? 'images/bg/bg_fan_avatar.png'
-        : avatar!.filePath;
+        ? AppAssets.ic_avatar_default_svg
+        : '${AppApiConfig.baseApiUrl}${avatar?.filePath}';
   }
 
   String? getCoverPath() {
-    return (cover?.filePath.isEmpty ?? true)
-        ? AppAssets.bg_cover_png
-        : cover?.filePath;
+    return (cover?.filePath.isNotEmpty ?? false)
+        ? '${AppApiConfig.baseApiUrl}${cover?.filePath ?? ''}'
+        : '';
   }
 
   bool isCalling() {
     return creatorRoom?.isNotEmpty ?? false;
-  }
-
-  bool isLikedCreator() {
-    return likedCreator?.isNotEmpty ?? false;
   }
 }

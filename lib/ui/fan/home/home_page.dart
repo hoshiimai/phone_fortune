@@ -1,4 +1,4 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/utils/app_colors.dart';
 import 'package:callmobile/utils/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 import '../../../core/model/enum/enum_bottom_navigation_page.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_dimensions.dart';
 import '../../../utils/app_styles.dart';
@@ -52,11 +52,12 @@ class HomePageState extends State<HomePage> {
           child: BlocConsumer<HomeBloc, HomeState>(
             listener: (BuildContext context, HomeState state) {},
             builder: (BuildContext context, HomeState state) {
+              final currentUser = state.currentLoggedInUser;
               final padding = MediaQuery.of(context).padding.top;
               return Scaffold(
                 extendBodyBehindAppBar: true,
                 appBar: HomeAppbar(
-                  title: LocaleKey.home.tr,
+                  title: 'ホーム',
                   isShowLogo: true,
                   height: 98,
                   actions: [
@@ -79,7 +80,7 @@ class HomePageState extends State<HomePage> {
                           ),
                           2.width,
                           Text(
-                            '30 Points',
+                            '${state.currentLoggedInUser?.pointBalance ?? 0} Points',
                             style: AppStyles.fontSize10(color: AppColors.colorFF7B98, fontWeight: FontWeight.w600),
                           )
                         ],
@@ -111,11 +112,11 @@ class HomePageState extends State<HomePage> {
                               children: [
                                 const TopBanner(),
                                 _indicators(),
-                                const TopSummary(),
+                                TopSummary(user: currentUser),
                                 16.height,
                                 const TopGuideline(),
                                 16.height,
-                                TopRanking(),
+                                TopRanking(creators: state.creators,),
                               ],
                             ),
                           ),

@@ -1,4 +1,4 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -14,7 +14,7 @@ class HistoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const name = 'ナナコ';
+    final name = room.creatorInfo?.fullName ?? '';
     return InkWell(
       onTap: () {
       },
@@ -26,9 +26,9 @@ class HistoryItem extends StatelessWidget {
             children: [
               SizedBox(width: 20, height: 16, child: SvgPicture.asset(room.status.icon)),
               15.width,
-              const Flexible(
+              Flexible(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     name,
                     overflow: TextOverflow.ellipsis,
@@ -39,7 +39,7 @@ class HistoryItem extends StatelessWidget {
               ),
               if (room.status != TypeCall.cancel) ...[
                 5.width,
-                Text("(${AppUtils.formatDuration(room.getCallingTiming())})",
+                Text("(${AppUtils.formatDuration(room.callTiming ?? 0)})",
                     style: AppStyles.fontSize12(height: 18 / 12, color: AppColors.black)),
               ]
             ],

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:callmobile/locale/locale_key.dart';
+
 import 'package:callmobile/utils/app_assets.dart';
 
 enum SettingType {
@@ -11,13 +11,13 @@ enum SettingType {
   String get nameLocalization {
     switch (this) {
       case SettingType.history:
-        return LocaleKey.historyChat.tr;
+        return '会話履歴';
       case SettingType.settingAccount:
-        return LocaleKey.settingAccount.tr;
+        return 'アカウント設定';
       case SettingType.personalInfo:
-        return LocaleKey.personalInfo.tr;
+        return '本人情報';
       case SettingType.logout:
-        return LocaleKey.logout.tr;
+        return 'ログアウト';
     }
   }
 

@@ -42,3 +42,10 @@ class OnUpdateCreator extends WaitingEvent {
   @override
   List<Object> get props => [isBlocked, creator, updatedCreator];
 }
+
+class OnGetWaitingFans extends WaitingEvent {
+  const OnGetWaitingFans();
+
+  @override
+  List<Object> get props => [];
+}

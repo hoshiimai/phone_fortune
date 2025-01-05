@@ -1,4 +1,4 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/ui/widgets/app_image.dart';
 import 'package:callmobile/ui/widgets/app_listview.dart';
 import 'package:callmobile/ui/widgets/common/creator_item.dart';
@@ -7,7 +7,7 @@ import 'package:callmobile/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_dimensions.dart';
@@ -18,6 +18,7 @@ import 'interactor/waiting_bloc.dart';
 
 class WaitingPage extends StatefulWidget {
   const WaitingPage({super.key});
+
   @override
   WaitingPageState createState() {
     return WaitingPageState();
@@ -26,6 +27,7 @@ class WaitingPage extends StatefulWidget {
 
 class WaitingPageState extends State<WaitingPage> {
   TextEditingController? keywordController;
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +49,7 @@ class WaitingPageState extends State<WaitingPage> {
         builder: (BuildContext context, WaitingState state) {
           return Scaffold(
             extendBodyBehindAppBar: true,
-            appBar: CustomAppBar(title: LocaleKey.waitingTitle.tr, isShowLogo: true),
+            appBar: const CustomAppBar(title: '順番待ちリスト', isShowLogo: true),
             body: BasePage(
               unFocusWhenTouchOutsideInput: true,
               child: Padding(
@@ -55,63 +57,71 @@ class WaitingPageState extends State<WaitingPage> {
                 child: Stack(
                   children: [
                     Container(decoration: AppDimensions.decoration),
-                    state.fans.isEmpty
-                        ? _emptyView(context, state)
-                        : Padding(
-                            padding: 16.paddingAll,
-                            child: Column(
-                              children: [
-                                Row(children: [
-                                  Text('列', style: AppStyles.fontSize14(color: AppColors.colorFF7B98, height: 21/14, fontWeight: FontWeight.w600),),
-                                  6.width,
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 2.5, horizontal: 4),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      gradient: AppColors.gradientCenterHorizontal(startColor:AppColors.colorFD5C87, endColor: AppColors.colorFF393F),
+                    Padding(
+                      padding: 16.paddingAll,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '列',
+                                style: AppStyles.fontSize14(
+                                    color: AppColors.colorFF7B98, height: 21 / 14, fontWeight: FontWeight.w600),
+                              ),
+                              6.width,
+                              Container(
+                                padding: const EdgeInsets.symmetric(vertical: 2.5, horizontal: 4),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  gradient: AppColors.gradientCenterHorizontal(
+                                      startColor: AppColors.colorFD5C87, endColor: AppColors.colorFF393F),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const AppImage(
+                                      image: AppAssets.ic_waiting_group_png,
+                                      width: 16,
+                                      height: 16,
                                     ),
-                                    child: Row(
-                                      children: [
-                                        const AppImage(image: AppAssets.ic_waiting_group_png, width: 16, height: 16,),
-                                        Text('${state.fans.length}', style: AppStyles.fontSize16(color: AppColors.white, fontWeight: FontWeight.w600),)
-                                      ],
-                                    ),
-                                  )
-                                ],),
-                                24.height,
-                                Expanded(
-                                    child: AppListView(
-                                  itemCount: state.fans.length,
-                                  isLoading: state.loadingState == PageState.loading,
-                                  isLoadMore: state.loadingMoreState == PageState.loading,
-                                  loadMore: () {
-                                    context.read<WaitingBloc>().add(const OnLoadMore());
-                                  },
-                                  itemBuilder: (BuildContext context, int index) => FanWaitingItem(
-                                    index: index + 1,
-                                    info: state.fans[index],
-                                    isShow: false,
-                                  ),
-                                  separatorBuilder: (BuildContext context, int index) => 10.height,
-                                ))
-                              ],
-                            ),
-                          )
+                                    Text(
+                                      '${state.fans.length}',
+                                      style: AppStyles.fontSize16(
+                                          color: AppColors.white, fontWeight: FontWeight.w600),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          24.height,
+                          Expanded(
+                              child: AppListView(
+                                refresh: () {
+                                  context.read<WaitingBloc>().add(const Init());
+                                },
+                                emptyMessage: 'クリエイターがありません。',
+                                itemCount: state.fans.length,
+                                isLoading: state.status == PageState.loading,
+                                isLoadMore: state.loadingMoreState == PageState.loading,
+                                loadMore: () {
+                                  context.read<WaitingBloc>().add(const OnLoadMore());
+                                },
+                                itemBuilder: (BuildContext context, int index) => FanWaitingItem(
+                                  index: index + 1,
+                                  fan: state.fans[index],
+                                  isShow: false,
+                                ),
+                                separatorBuilder: (BuildContext context, int index) => 10.height,
+                              ))
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _emptyView(BuildContext context, WaitingState state) {
-    return Center(
-      child: Text(
-        LocaleKey.noCreator.tr,
-        style: AppStyles.fontSize16(fontWeight: FontWeight.w400, color: AppColors.black),
       ),
     );
   }

@@ -9,7 +9,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
 import 'di/di_graph_setup.dart';
-import 'locale/translation_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,19 +64,12 @@ class MyAppState extends State<MyApp> {
         enableLog: true,
         initialRoute: AppPages.splash,
         getPages: AppPages.pages,
-        locale: Get.find<TranslationManager>().locale,
-        fallbackLocale: TranslationManager.fallbackLocaleUS,
-        translations: Get.find<TranslationManager>(),
         title: AppConstants.appName,
         theme: AppThemes.lightTheme,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: [
-          TranslationManager.fallbackLocaleUS,
-          TranslationManager.fallbackLocaleJP
         ],
       ),
     );

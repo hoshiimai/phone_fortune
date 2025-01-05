@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:callmobile/core/managers/signaling.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' as get_x;
@@ -43,17 +44,7 @@ class AuthInterceptor extends Interceptor {
     final appShared = get_x.Get.find<AppShared>();
     if (err.response?.statusCode == HttpStatus.unauthorized) {
       try {
-        failedRequests.add({'response': err.response, 'handler': handler});
-        if (!_isRefreshing) {
-          // Refresh token
-          // final isRefreshSuccess = await refreshToken();
-          // // Retry failed requests
-          // if (isRefreshSuccess) {
-          //   retryRequest(appShared.getAccessTokenValue()!);
-          // } else {
-          //   _logOut(appShared);
-          // }
-        }
+        _logOut(appShared);
       } catch (e) {
         if (kDebugMode) {
           print(e.toString());
@@ -114,8 +105,13 @@ class AuthInterceptor extends Interceptor {
   }
 
   void _logOut(AppShared appShared) {
+    if(get_x.Get.isRegistered<Signaling>()) {
+      get_x.Get.find<Signaling>().close();
+      get_x.Get.delete<Signaling>();
+    }
     appShared.clearUserData();
-
-    get_x.Get.offNamedUntil(AppPages.signIn, (route) => false);
+    if(get_x.Get.currentRoute != AppPages.signIn) {
+      get_x.Get.offAllNamed(AppPages.signIn);
+    }
   }
 }

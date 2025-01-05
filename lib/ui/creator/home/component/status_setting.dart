@@ -1,4 +1,4 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/utils/app_assets.dart';
 import 'package:callmobile/utils/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +8,8 @@ import '../../../../utils/app_colors.dart';
 import '../../../widgets/app_radio_button_group.dart';
 
 class StatusSetting extends StatelessWidget {
-  final CreatorStatus status;
-  final Function(CreatorStatus) onUpdateStatus;
+  final Status status;
+  final Function(Status) onUpdateStatus;
   const StatusSetting({super.key, required this.status, required this.onUpdateStatus,});
 
   @override
@@ -62,7 +62,7 @@ class StatusSetting extends StatelessWidget {
             selectedOption: status.description(),
             onChanged: (String? value) {
               if (value?.isNotEmpty ?? false) {
-                final status = CreatorStatus.fromDescription(value!);
+                final status = Status.fromDescription(value!);
                 onUpdateStatus.call(status);
               }
             },

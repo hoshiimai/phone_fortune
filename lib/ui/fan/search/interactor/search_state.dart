@@ -4,7 +4,7 @@ class SearchState extends Equatable {
   final PageState loadingState;
   final String error;
   final PageCommand? pageCommand;
-  final List<Creator> creators;
+  final List<User> creators;
   final PageState loadingMoreState;
   final String? keyword;
   final int currentPage;
@@ -26,7 +26,7 @@ class SearchState extends Equatable {
   SearchState copyWith({
     PageState? loadingState,
     String? error,
-    List<Creator>? creators,
+    List<User>? creators,
     PageState? loadingMoreState,
     bool? isLoadingMore,
     String? keyword,

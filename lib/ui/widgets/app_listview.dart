@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 
-import '../../locale/locale_key.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_styles.dart';
 import 'app_circular_progress.dart';
@@ -20,9 +19,11 @@ class AppListView extends StatefulWidget {
   final bool isLoading;
   final bool shrinkWrap;
   final String? emptyMessage;
+  final ScrollPhysics? scrollPhysics;
 
   const AppListView({
     super.key,
+    this.scrollPhysics,
     this.padding,
     this.scrollDirection = Axis.vertical,
     required this.itemCount,
@@ -86,7 +87,7 @@ class _AppListViewState extends State<AppListView> {
                           scrollDirection: widget.scrollDirection,
                           itemCount: widget.itemCount,
                           separatorBuilder: widget.separatorBuilder,
-                          physics: const AlwaysScrollableScrollPhysics(),
+                          physics:  widget.scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
                           itemBuilder: widget.itemBuilder,
                         ),
                   widget.isLoadMore
@@ -107,7 +108,7 @@ class _AppListViewState extends State<AppListView> {
                 widget.refresh?.call();
               },
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
+                physics: widget.scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minWidth: constraints.maxWidth,
@@ -139,13 +140,13 @@ class _AppListViewState extends State<AppListView> {
 
   Widget _emptyView() {
     return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: widget.scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
       child: Column(
         children: [
           (((Get.height - 352) / 2) - 32).toInt().height,
           Center(
             child: Text(
-              widget.emptyMessage ?? LocaleKey.noData.tr,
+              widget.emptyMessage ?? 'データなし',
               style: AppStyles.fontSize16(fontWeight: FontWeight.w400, color: AppColors.black),
             ),
           ),

@@ -10,6 +10,7 @@ class MainCreatorState with _$MainCreatorState {
     CreatorUpdate? creatorUpdate,
     BottomNavigationPage? popPage,
     PageNavigation? pageNavigation,
+    int? waitingCount,
   }) = _MainCreatorState;
 
   factory MainCreatorState.initial() => const MainCreatorState();

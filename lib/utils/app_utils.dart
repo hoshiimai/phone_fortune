@@ -3,11 +3,7 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import '../core/model/response/model/point_transaction.dart';
-import '../locale/locale_key.dart';
 
 class AppUtils {
   static const yyyyMMdd = 'yyyy/MM/dd';
@@ -53,15 +49,6 @@ class AppUtils {
     }
   }
 
-  static String formatPoint(int amount, TypePoint type) {
-    if (type == TypePoint.buy || type == TypePoint.received) {
-      return '+ ${amount}pt';
-    } else if (type == TypePoint.use || type == TypePoint.withdrawed) {
-      return '- ${amount}pt';
-    }
-    return '';
-  }
-
   static String formatThousand(double price) {
     String formattedAmount = NumberFormat('#,##0').format(price);
 
@@ -96,19 +83,19 @@ class AppUtils {
   static String getDayOfWeek(DateTime dateTime) {
     switch (dateTime.weekday) {
       case 1:
-        return LocaleKey.mon.tr; // Monday
+        return '月'; // Monday
       case 2:
-        return LocaleKey.tue.tr; // Tuesday
+        return '火';
       case 3:
-        return LocaleKey.wed.tr; //Wednesday
+        return '水'; //Wednesday
       case 4:
-        return LocaleKey.thur.tr; //Thursday
+        return '木'; //Thursday
       case 5:
-        return LocaleKey.fri.tr; //Friday
+        return '金'; //Friday
       case 6:
-        return LocaleKey.sat.tr; //Saturday
+        return '土'; //Saturday
       case 7:
-        return LocaleKey.sun.tr; //Sunday
+        return '日'; //Sunday
       default:
         return ""; //Nothing
     }
@@ -276,5 +263,15 @@ class AppUtils {
     int remainingSeconds = seconds % 60;  // Get the remaining seconds after minutes
 
     return "$minutes分$remainingSeconds秒";
+  }
+
+  static String formatDurationMinToHourJapanese(int minutes) {
+    int hours = minutes ~/ 60;  // Integer division to get hours
+    int remainingMin = minutes % 60;  // Get the remaining minutes after hours
+    if(hours > 0) {
+      return "$hours時間$remainingMin分待ち";
+    } else {
+      return "$remainingMin分待ち";
+    }
   }
 }

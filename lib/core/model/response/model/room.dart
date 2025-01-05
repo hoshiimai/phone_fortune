@@ -28,6 +28,8 @@ class Room {
   final int? afterCallFeeLatest;
   final int? afterCallFee;
   final dynamic mediaData;
+  final UserRoom? creatorInfo;
+  final UserRoom? fanInfo;
 
   Room({
     required this.id,
@@ -53,6 +55,8 @@ class Room {
     this.afterCallFeeLatest,
     this.afterCallFee,
     this.mediaData,
+    this.creatorInfo,
+    this.fanInfo,
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
@@ -60,7 +64,7 @@ class Room {
       id: json['id'],
       rootId: json['root_id'],
       userId: json['user_id'],
-      creatorId: json['creator_id'],
+      creatorId: json['idol_id'],
       status: TypeCall.fromInt(json['status']),
       url: json['url'],
       liveAt: DateTime.parse(json['live_at']),
@@ -85,6 +89,12 @@ class Room {
       afterCallFeeLatest: json['after_call_fee_latest'],
       afterCallFee: json['after_call_fee'],
       mediaData: json['media_data'],
+      creatorInfo: json['idol_room'] != null
+          ? UserRoom.fromJson(json['idol_room'])
+          : null,
+      fanInfo: json['user_room'] != null
+          ? UserRoom.fromJson(json['user_room'])
+          : null,
     );
   }
 
@@ -192,5 +202,18 @@ class EvaluatedHistory {
     return {
       'star_num': starNum,
     };
+  }
+}
+
+class UserRoom {
+  final String fullName;
+  final String? avatarFilePath;
+  UserRoom({required this.fullName, required this.avatarFilePath});
+
+  factory UserRoom.fromJson(Map<String, dynamic> json) {
+    return UserRoom(
+      fullName: json['fullname'] as String,
+      avatarFilePath: json['avatar'] != null ? json['avatar']['file_path'] as String : null,
+    );
   }
 }

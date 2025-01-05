@@ -4,31 +4,26 @@ class FanProfileEditState extends Equatable {
   final PageState status;
   final String error;
   final PageCommand? pageCommand;
-  final String email;
-  final String validEmail;
-  final String password;
-  final String validPassword;
-  // User can be Fan or Creator base on who is logged in (another Creator or Fan)
-  final User? user;
+  final String name;
+  final String validName;
+  final String welcomeMessage;
   // currentLoginUser can be Fan or Creator
   final User? currentLoginUser;
   final GenderType? gender;
   final DateTime? birthDate;
-  final String validBirthDate;
+  final File? avatar;
 
   const FanProfileEditState({
     required this.status,
     required this.error,
     this.pageCommand,
-    this.email = '',
-    this.validEmail = '',
-    this.password = '',
-    this.validPassword = '',
+    this.name = '',
+    this.validName = '',
+    this.welcomeMessage = '',
     this.currentLoginUser,
-    this.user,
     this.gender = GenderType.male,
-    this.validBirthDate = '',
     this.birthDate,
+    this.avatar,
   });
 
   FanProfileEditState copyWith({
@@ -36,33 +31,29 @@ class FanProfileEditState extends Equatable {
     String? error,
     List<String>? languages,
     String? languageSelected,
-    String? email,
-    String? validEmail,
-    String? password,
-    String? validPassword,
+    String? name,
+    String? validName,
+    String? welcomeMessage,
     User? currentLoginUser,
-    User? user,
     GenderType? gender,
     DateTime? birthDate,
-    String? validBirthDate,
+    File? avatar,
   }) {
     return FanProfileEditState(
       status: status ?? this.status,
       error: error ?? this.error,
       pageCommand: pageCommand,
-      email: email ?? this.email,
-      validEmail: validEmail ?? this.validEmail,
-      password: password ?? this.password,
-      validPassword: validPassword ?? this.validPassword,
+      name: name ?? this.name,
+      validName: validName ?? this.validName,
+      welcomeMessage: welcomeMessage ?? this.welcomeMessage,
       currentLoginUser: currentLoginUser ?? this.currentLoginUser,
-      user: user ?? this.user,
       gender: gender ?? this.gender,
       birthDate: birthDate ?? this.birthDate,
-      validBirthDate: validBirthDate ?? this.validBirthDate,
+      avatar: avatar ?? this.avatar,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, error, pageCommand, email, validEmail, password, validPassword, currentLoginUser, user, gender, birthDate, validBirthDate];
+      [status, error, pageCommand, name, validName, welcomeMessage, currentLoginUser, gender, birthDate, avatar,];
 }

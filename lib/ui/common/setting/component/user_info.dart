@@ -1,5 +1,5 @@
 import 'package:callmobile/core/model/enum/enum_role.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -48,7 +48,7 @@ class UserInfo extends StatelessWidget {
               ),
               20.width,
               Text(
-                user?.nickname ?? '',
+                user?.fullName ?? '',
                 style: AppStyles.fontSize14(
                   color: AppColors.black,
                   fontWeight: FontWeight.w600,

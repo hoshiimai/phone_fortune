@@ -1,10 +1,10 @@
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 import '../../../core/model/enum/password_type.dart';
-import '../../../locale/locale_key.dart';
+
 import '../../../utils/app_appbar.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
@@ -55,8 +55,8 @@ class PasswordEditPageState extends State<PasswordEditPage> {
           pageState: state.status,
           success: Scaffold(
             extendBodyBehindAppBar: true,
-            appBar: CustomAppBar(
-                title: LocaleKey.passwordChangeTitle.tr, iconLeading: AppAssets.ic_back_2_svg),
+            appBar: const CustomAppBar(
+                title: 'パスワード編集', iconLeading: AppAssets.ic_back_2_svg),
             body: BasePage(
               unFocusWhenTouchOutsideInput: true,
               child: Padding(
@@ -73,7 +73,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                       children: [
                         24.height,
                         Text(
-                          LocaleKey.changePassWordCurrent.tr,
+                          '現在のパスワード',
                           style: AppStyles.fontSize14(
                             fontWeight: FontWeight.w600,
                             height: 21 / 14,
@@ -82,7 +82,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                         ),
                         15.height,
                         AppTextField(
-                          hintText: LocaleKey.changePassWordCurrent.tr,
+                          hintText: '現在のパスワード',
                           padding: 22.paddingHorizontal,
                           isPassword: true,
                           borderColor: AppColors.colorDEDEDE,
@@ -95,7 +95,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                         ),
                         33.height,
                         Text(
-                          LocaleKey.changePassWordNew.tr,
+                          '新規のパスワード',
                           style: AppStyles.fontSize14(
                             fontWeight: FontWeight.w600,
                             height: 21 / 14,
@@ -105,7 +105,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                         15.height,
                         AppTextField(
                           controller: newPassController,
-                          hintText: LocaleKey.changePassWordNew.tr,
+                          hintText: '新規のパスワード',
                           padding: 22.paddingHorizontal,
                           isPassword: true,
                           borderColor: AppColors.colorDEDEDE,
@@ -117,7 +117,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                         ),
                         15.height,
                         Text(
-                          LocaleKey.changePassWordNewConfirm.tr,
+                          '新規のパスワード（確認用）',
                           style: AppStyles.fontSize14(
                             fontWeight: FontWeight.w600,
                             height: 21 / 14,
@@ -127,7 +127,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                         15.height,
                         AppTextField(
                           controller: confirmPassController,
-                          hintText: LocaleKey.changePassWordNewConfirm.tr,
+                          hintText: '新規のパスワード（確認用）',
                           padding: 22.paddingHorizontal,
                           isPassword: true,
                           borderColor: AppColors.colorDEDEDE,
@@ -148,7 +148,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                             },
                             width: (Get.width - 50) / 2,
                             height: 55,
-                            title: LocaleKey.register.tr,
+                            title: '登録する',
                           ),
                           const Spacer(),
                           AppButton(
@@ -156,7 +156,7 @@ class PasswordEditPageState extends State<PasswordEditPage> {
                             backgroundColor: AppColors.color9B9B9B,
                             width: (Get.width - 50) / 2,
                             height: 55,
-                            title: LocaleKey.cancel.tr,
+                            title: 'キャンセル',
                           )
                         ])
                       ],

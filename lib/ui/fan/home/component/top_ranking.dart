@@ -1,25 +1,18 @@
-import 'package:callmobile/core/model/business/creator_status.dart';
-import 'package:callmobile/core/model/response/model/creator.dart';
-import 'package:callmobile/extensions/int_extensions.dart';
+import 'package:callmobile/utils/extensions/int_extensions.dart';
 import 'package:callmobile/ui/widgets/common/creator_item.dart';
 import 'package:callmobile/utils/app_assets.dart';
 import 'package:callmobile/utils/app_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../../core/model/response/model/user.dart';
 
 import '../../../../utils/app_colors.dart';
+import '../../../widgets/app_listview.dart';
 
 class TopRanking extends StatelessWidget {
-  TopRanking({super.key});
-  
-  final creators = [
-    Creator(name: '名前', comment: 'コメント', waitingFanCount: 10, status: CreatorStatus.away),
-    Creator(name: '名前', comment: 'コメント', waitingFanCount: 1, status: CreatorStatus.away),
-    Creator(name: '名前', comment: 'コメント', waitingFanCount: 6, status: CreatorStatus.away),
-    Creator(name: '名前', comment: 'コメント', waitingFanCount: 0, status: CreatorStatus.available),
-    Creator(name: '名前', comment: 'コメント', waitingFanCount: 0, status: CreatorStatus.offline),
-    Creator(name: '名前', comment: 'コメント', waitingFanCount: 0, status: CreatorStatus.offline),
-    Creator(name: '名前', comment: 'コメント', waitingFanCount: 0, status: CreatorStatus.offline),
-  ];
+  final List<User> creators;
+  const TopRanking({super.key, required this.creators});
 
   @override
   Widget build(BuildContext context) {
@@ -98,13 +91,25 @@ class TopRanking extends StatelessWidget {
   }
 
   Widget _creatorList() {
-    return ListView.separated(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      itemCount: creators.length,
-      separatorBuilder: (ctx, index) => 10.height,
-      physics: const ClampingScrollPhysics(),
-      itemBuilder: (ctx, index) => CreatorItem(creator: creators[index],),
-    );
+    return creators.isNotEmpty
+        ? AppListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            itemCount: creators.length,
+            separatorBuilder: (ctx, index) => 10.height,
+            scrollPhysics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (ctx, index) => CreatorItem(
+              creator: creators[index],
+            ),
+          )
+        : Container(
+            padding: 24.paddingVertical,
+            child: Center(
+              child: Text(
+                'データなし',
+                style: AppStyles.fontSize16(fontWeight: FontWeight.w400, color: AppColors.black),
+              ),
+            ),
+          );
   }
 }

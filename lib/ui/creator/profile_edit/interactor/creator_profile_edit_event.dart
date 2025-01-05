@@ -8,23 +8,23 @@ class Init extends CreatorProfileEditEvent {
   const Init();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class OnWelcomeMessageChanged extends CreatorProfileEditEvent {
-  final String welcomeMessages;
-  const OnWelcomeMessageChanged(this.welcomeMessages);
+  final String welcomeMessage;
+  const OnWelcomeMessageChanged(this.welcomeMessage);
 
   @override
-  List<Object> get props => [welcomeMessages];
+  List<Object> get props => [welcomeMessage];
 }
 
-class OnNickNameChanged extends CreatorProfileEditEvent {
-  final String nickName;
-  const OnNickNameChanged(this.nickName);
+class OnNameChanged extends CreatorProfileEditEvent {
+  final String name;
+  const OnNameChanged(this.name);
 
   @override
-  List<Object> get props => [nickName];
+  List<Object> get props => [name];
 }
 
 class OnAvatarSelected extends CreatorProfileEditEvent {

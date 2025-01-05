@@ -57,3 +57,10 @@ class OnClearPageNavigation extends MainCreatorEvent {
   @override
   List<Object> get props => [OnClearPageNavigation];
 }
+
+class OnUpdateWaitingCount extends MainCreatorEvent {
+  final int? count;
+  const OnUpdateWaitingCount(this.count);
+  @override
+  List<Object?> get props => [count];
+}
