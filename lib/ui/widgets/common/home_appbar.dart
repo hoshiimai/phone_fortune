@@ -59,7 +59,6 @@ class HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(AppAssets.logo_png),
               Padding(
                 padding: 5.paddingAll,
                 child: SvgPicture.asset(icon,),

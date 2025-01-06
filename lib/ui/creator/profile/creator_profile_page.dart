@@ -25,6 +25,8 @@ import '../../widgets/app_image.dart';
 import '../../widgets/base/app_dialog.dart';
 import 'interactor/creator_profile_bloc.dart';
 
+import 'package:flutter_html/flutter_html.dart';
+
 class CreatorProfilePage extends StatefulWidget {
   final User? creator;
 
@@ -61,7 +63,23 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
             }
             final creator = state.creator!;
             final name = creator.fullName ?? '';
-            final welcomeMessage = creator.welcomeMessages ?? '';
+            // final welcomeMessage = creator.welcomeMessages ?? '';
+            const welcomeMessage = '''
+              <div style="color: #333; font-family: Arial, sans-serif;">
+                <h2 style="color: #2196F3; font-size: 18px;">プロフィール</h2>
+                <p style="margin-bottom: 15px;">
+                  こんにちは！私のプロフィールへようこそ。
+                </p>
+                <ul style="list-style-type: none; padding-left: 0;">
+                  <li style="margin-bottom: 8px;">🎵 好きな音楽: J-POP</li>
+                  <li style="margin-bottom: 8px;">📚 趣味: 読書、写真撮影</li>
+                  <li style="margin-bottom: 8px;">✨ 特技: ピアノ演奏</li>
+                </ul>
+                <p style="color: #666; font-style: italic;">
+                  一緒に楽しい時間を過ごしましょう！
+                </p>
+              </div>
+            ''';            
             final coverFilePath = creator.getCoverPath();
             return GestureDetector(
               onTap: () {
@@ -154,11 +172,24 @@ class _CreatorProfilePageState extends State<CreatorProfilePage> {
                               children: [
                                 ...[
                                   25.height,
+                                  // Align(
+                                  //   alignment: Alignment.topLeft,
+                                  //   child: Text(
+                                  //     welcomeMessage,
+                                  //     style: AppStyles.fontSize12(color: AppColors.black, height: 20 / 12),
+                                  //   ),
+                                  // ),
                                   Align(
                                     alignment: Alignment.topLeft,
-                                    child: Text(
-                                      welcomeMessage,
-                                      style: AppStyles.fontSize12(color: AppColors.black, height: 20 / 12),
+                                    child: Html(
+                                      data: welcomeMessage,
+                                      style: {
+                                        "body": Style(
+                                          fontSize: FontSize(12),
+                                          color: AppColors.black,
+                                          lineHeight: LineHeight.number(1.67), // 20/12
+                                        ),
+                                      },
                                     ),
                                   ),
                                   110.height,

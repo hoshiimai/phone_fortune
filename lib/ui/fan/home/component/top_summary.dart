@@ -62,10 +62,10 @@ class TopSummary extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: 10.paddingAll,
-            child: Text('メールが届かない方へ', style: AppStyles.fontSize10(color: AppColors.color616161),),
-          )
+          // Padding(
+          //   padding: 10.paddingAll,
+          //   child: Text('メールが届かない方へ', style: AppStyles.fontSize10(color: AppColors.color616161),),
+          // )
         ],
       ),
     );

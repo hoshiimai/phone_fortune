@@ -52,21 +52,6 @@ class TopGuideline extends StatelessWidget {
             ],
           ),
           10.height,
-          Row(
-            children: [
-              Image.asset(
-                AppAssets.ic_target_png,
-                width: 16,
-                height: 16,
-              ),
-              4.width,
-              Text(
-                '使用説明書02: 説明する説明する説明する説',
-                style: AppStyles.fontSize12(color: AppColors.color616161, fontWeight: FontWeight.w500),
-              )
-            ],
-          ),
-          10.height,
           Padding(
             padding: 3.paddingVertical,
             child: Image.asset(
